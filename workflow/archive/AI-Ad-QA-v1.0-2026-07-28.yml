@@ -1,0 +1,1550 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFE4E8'
+  icon_type: emoji
+  mode: workflow
+  name: AI广告素材质量评估与优化系统
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai_api_compatible:0.0.55@47a2292765960cabfff54caa4b20f5645f64d771af490f190bf4e77db9a640ba
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: http-request
+      id: 1785117643695-source-1785118484972-target
+      selected: false
+      source: '1785117643695'
+      sourceHandle: source
+      target: '1785118484972'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1785118484972-source-1785119074924-target
+      selected: false
+      source: '1785118484972'
+      sourceHandle: source
+      target: '1785119074924'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1785119074924-source-1785118641516-target
+      selected: false
+      source: '1785119074924'
+      sourceHandle: source
+      target: '1785118641516'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: template-transform
+      id: 1785118641516-false-1785119622676-target
+      selected: false
+      source: '1785118641516'
+      sourceHandle: 'false'
+      target: '1785119622676'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: end
+      id: 1785119622676-source-1785119392717-target
+      selected: false
+      source: '1785119622676'
+      sourceHandle: source
+      target: '1785119392717'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: iteration
+      id: 1785118641516-true-1785119811971-target
+      selected: false
+      source: '1785118641516'
+      sourceHandle: 'true'
+      target: '1785119811971'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1785119811971'
+        sourceType: iteration-start
+        targetType: http-request
+      id: 1785119811971start-source-1785119894534-target
+      selected: false
+      source: 1785119811971start
+      sourceHandle: source
+      target: '1785119894534'
+      targetHandle: target
+      type: custom
+      zIndex: 1001
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: iteration
+        targetType: llm
+      id: 1785119811971-source-1785120267932-target
+      selected: false
+      source: '1785119811971'
+      sourceHandle: source
+      target: '1785120267932'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 1785120267932-source-1785123203227-target
+      selected: false
+      source: '1785120267932'
+      sourceHandle: source
+      target: '1785123203227'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: end
+      id: 1785118484972-fail-branch-1785133040610-target
+      source: '1785118484972'
+      sourceHandle: fail-branch
+      target: '1785133040610'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: template-transform
+      id: 1785123203227-source-1785135338579-target
+      source: '1785123203227'
+      sourceHandle: source
+      target: '1785135338579'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: end
+      id: 1785135338579-source-1785123588776-target
+      source: '1785135338579'
+      sourceHandle: source
+      target: '1785123588776'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - video
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          default: ''
+          hide: false
+          hint: ''
+          label: video
+          options: []
+          placeholder: ''
+          required: true
+          type: file
+          variable: video
+        - default: auto
+          hint: ''
+          label: 素材类型
+          options:
+          - auto
+          - full_ad
+          - hook
+          - intro
+          - show
+          placeholder: ''
+          required: true
+          type: select
+          variable: material_type
+        - hint: ''
+          label: 产品名称
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: product_name
+        - default: ''
+          hint: ''
+          label: 产品类型
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: product_type
+        - default: ''
+          hint: ''
+          label: 核心功能
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: core_function
+        - default: ''
+          hint: ''
+          label: 目标用户
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: target_audience
+        - default: ''
+          hint: ''
+          label: 转化目标
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: conversion_goal
+        - default: ''
+          hint: ''
+          label: 已验证的数据或卖点
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: verified_claims
+      height: 291
+      id: '1785117643695'
+      position:
+        x: 80
+        y: 282
+      positionAbsolute:
+        x: 80
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - file:
+            - '1785117643695'
+            - video
+            id: key-value-71
+            key: video
+            type: file
+            value: ''
+          - id: key-value-453
+            key: ''
+            type: text
+            value: ''
+          type: form-data
+        error_strategy: fail-branch
+        headers: ''
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        ssl_verify: true
+        timeout:
+          connect: 10
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+          read: 120
+          write: 120
+        title: HTTP 请求-上传并切片
+        type: http-request
+        url: http://host.docker.internal:8000/api/v1/videos/extract
+        variables: []
+      height: 174
+      id: '1785118484972'
+      position:
+        x: 457
+        y: 353
+      positionAbsolute:
+        x: 457
+        y: 353
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 787b074b-f75d-4d67-9d63-a7879e4cedef
+            value: true
+            varType: boolean
+            variable_selector:
+            - '1785119074924'
+            - success
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 124
+      id: '1785118641516'
+      position:
+        x: 1089
+        y: 295
+      positionAbsolute:
+        x: 1089
+        y: 295
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "import json\n\n\ndef main(body, status_code) -> dict:\n    try:\n \
+          \       status_code = int(status_code)\n\n        if isinstance(body, str):\n\
+          \            data = json.loads(body)\n        elif isinstance(body, dict):\n\
+          \            data = body\n        else:\n            raise ValueError(\"\
+          接口响应不是有效的JSON对象\")\n\n        if status_code < 200 or status_code >= 300:\n\
+          \            return {\n                \"success\": False,\n           \
+          \     \"error\": data.get(\"detail\", f\"切片接口返回HTTP {status_code}\"),\n\
+          \                \"video_id\": \"\",\n                \"duration_seconds\"\
+          : 0.0,\n                \"frame_urls\": [],\n                \"timeline\"\
+          : \"\",\n                \"frames_json\": \"[]\"\n            }\n\n    \
+          \    frames = data.get(\"frames\", [])\n\n        if not isinstance(frames,\
+          \ list) or not frames:\n            return {\n                \"success\"\
+          : False,\n                \"error\": \"切片接口没有返回任何关键帧\",\n              \
+          \  \"video_id\": str(data.get(\"video_id\", \"\")),\n                \"\
+          duration_seconds\": float(data.get(\"duration_seconds\", 0)),\n        \
+          \        \"frame_urls\": [],\n                \"timeline\": \"\",\n    \
+          \            \"frames_json\": \"[]\"\n            }\n\n        frame_urls\
+          \ = []\n        timeline_lines = []\n        clean_frames = []\n\n     \
+          \   for frame in frames:\n            if not isinstance(frame, dict):\n\
+          \                continue\n\n            url = str(frame.get(\"url\", \"\
+          \")).strip()\n\n            if not url:\n                continue\n\n  \
+          \          timestamp = float(frame.get(\"timestamp_seconds\", 0))\n    \
+          \        filename = str(frame.get(\"filename\", \"\")).strip()\n\n     \
+          \       frame_number = len(frame_urls) + 1\n\n            frame_urls.append(url)\n\
+          \n            timeline_lines.append(\n                f\"关键帧{frame_number}：{timestamp:g}秒\"\
+          \n            )\n\n            clean_frames.append({\n                \"\
+          frame_number\": frame_number,\n                \"timestamp_seconds\": timestamp,\n\
+          \                \"filename\": filename,\n                \"url\": url\n\
+          \            })\n\n        if not frame_urls:\n            return {\n  \
+          \              \"success\": False,\n                \"error\": \"关键帧列表中没有有效图片URL\"\
+          ,\n                \"video_id\": str(data.get(\"video_id\", \"\")),\n  \
+          \              \"duration_seconds\": float(data.get(\"duration_seconds\"\
+          , 0)),\n                \"frame_urls\": [],\n                \"timeline\"\
+          : \"\",\n                \"frames_json\": \"[]\"\n            }\n\n    \
+          \    return {\n            \"success\": True,\n            \"error\": \"\
+          \",\n            \"video_id\": str(data.get(\"video_id\", \"\")),\n    \
+          \        \"duration_seconds\": float(data.get(\"duration_seconds\", 0)),\n\
+          \            \"frame_urls\": frame_urls,\n            \"timeline\": \"\\\
+          n\".join(timeline_lines),\n            \"frames_json\": json.dumps(\n  \
+          \              clean_frames,\n                ensure_ascii=False\n     \
+          \       )\n        }\n\n    except Exception as exc:\n        return {\n\
+          \            \"success\": False,\n            \"error\": f\"解析切片响应失败：{exc}\"\
+          ,\n            \"video_id\": \"\",\n            \"duration_seconds\": 0.0,\n\
+          \            \"frame_urls\": [],\n            \"timeline\": \"\",\n    \
+          \        \"frames_json\": \"[]\"\n        }"
+        code_language: python3
+        outputs:
+          duration_seconds:
+            children: null
+            type: number
+          error:
+            children: null
+            type: string
+          frame_urls:
+            children: null
+            type: array[string]
+          frames_json:
+            children: null
+            type: string
+          success:
+            children: null
+            type: boolean
+          timeline:
+            children: null
+            type: string
+          video_id:
+            children: null
+            type: string
+        selected: false
+        title: 解析切片结果
+        type: code
+        variables:
+        - value_selector:
+          - '1785118484972'
+          - body
+          value_type: string
+          variable: body
+        - value_selector:
+          - '1785118484972'
+          - status_code
+          value_type: number
+          variable: status_code
+      height: 52
+      id: '1785119074924'
+      position:
+        x: 790
+        y: 370
+      positionAbsolute:
+        x: 790
+        y: 370
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        outputs:
+        - value_selector:
+          - '1785119622676'
+          - output
+          value_type: string
+          variable: result
+        selected: false
+        title: 失败输出
+        type: end
+      height: 88
+      id: '1785119392717'
+      position:
+        x: 1635
+        y: 599
+      positionAbsolute:
+        x: 1635
+        y: 599
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        selected: false
+        template: "{\r\n  \"success\": false,\r\n  \"stage\": \"video_processing\"\
+          ,\r\n  \"error\": {{ error | tojson }}\r\n  \r\n}"
+        title: 模板转换
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1785119074924'
+          - error
+          value_type: string
+          variable: error
+      height: 52
+      id: '1785119622676'
+      position:
+        x: 1373
+        y: 520
+      positionAbsolute:
+        x: 1373
+        y: 520
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        error_handle_mode: terminated
+        flatten_output: true
+        height: 219
+        is_parallel: true
+        iterator_input_type: array[string]
+        iterator_selector:
+        - '1785119074924'
+        - frame_urls
+        output_selector:
+        - '1785119894534'
+        - files
+        output_type: array[file]
+        parallel_nums: 3
+        selected: false
+        start_node_id: 1785119811971start
+        title: 迭代-下载每张关键帧
+        type: iteration
+        width: 513
+      height: 219
+      id: '1785119811971'
+      position:
+        x: 1522
+        y: 184
+      positionAbsolute:
+        x: 1522
+        y: 184
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 513
+      zIndex: 0
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1785119811971start
+      parentId: '1785119811971'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 1546
+        y: 252
+      selectable: false
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1001
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data: []
+          type: none
+        headers: ''
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1785119811971'
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        ssl_verify: true
+        timeout:
+          connect: 10
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+          read: 30
+          write: 30
+        title: HTTP 请求 2-下载单张关键帧
+        type: http-request
+        url: '{{#1785119811971.item#}}'
+        variables: []
+      height: 125
+      id: '1785119894534'
+      parentId: '1785119811971'
+      position:
+        x: 128
+        y: 68
+      positionAbsolute:
+        x: 1650
+        y: 252
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1001
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            max_tokens: 6000
+            temperature: 0.1
+            top_p: 0.8
+          mode: chat
+          name: claude-opus-4-8
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - id: e3547f15-6ae4-4a54-b3dc-0bc1b24fe586
+          role: system
+          text: '你是一名专业的TikTok短视频广告素材分析师。
+
+
+            用户上传的素材不一定是完整广告，也可能只是单独的Hook、Intro或Show素材。
+
+
+            你的任务是：
+
+
+            第一步：识别素材类型。
+
+            第二步：根据素材承担的广告功能进行评价。
+
+            第三步：输出有视觉证据支持的问题和改进建议。
+
+
+            一、素材类型
+
+
+            detected_material_type只能填写：
+
+
+            full_ad
+
+            hook
+
+            intro
+
+            show
+
+            unknown
+
+
+            判断标准：
+
+
+            1. hook
+
+            素材主要用于吸引注意、制造冲突、提出问题、呈现痛点、激发好奇心或阻止用户划走。
+
+
+            2. intro
+
+            素材主要用于解释问题、介绍背景、引入产品或解决方案、建立信任或提供继续观看的理由。
+
+
+            3. show
+
+            素材主要用于展示产品、演示功能、呈现使用方法、展示核心卖点、效果证明、前后对比或行动号召。
+
+
+            4. full_ad
+
+            素材内部存在两个或以上广告阶段的明显推进，形成相对完整的广告叙事。
+
+
+            5. unknown
+
+            关键帧证据不足，无法可靠判断素材承担的广告功能。
+
+
+            二、用户指定类型
+
+
+            1. 用户会提供material_type。
+
+            2. material_type为auto时，根据关键帧自动判断素材类型。
+
+            3. material_type不是auto时，以用户指定类型作为主要评价对象。
+
+            4. 如果用户指定类型与画面明显不一致，仍按用户指定类型评价，但必须在classification_evidence中指出不一致。
+
+            5. 不得仅根据视频时长判断素材类型。
+
+            6. 4秒视频也可能是完整的Show素材，8秒视频也可能全部是Hook素材。
+
+
+            三、阶段状态
+
+
+            hook、intro、show都必须输出status。
+
+
+            status只能填写：
+
+
+            evaluated
+
+            partial
+
+            not_present
+
+            not_applicable
+
+
+            含义：
+
+
+            evaluated：
+
+            该阶段是当前素材的主要评价对象，且视觉证据充分。
+
+
+            partial：
+
+            该阶段在素材中出现，但证据不足或只呈现了一部分。
+
+
+            not_present：
+
+            当前素材是完整广告，但缺少这个本应存在的阶段。
+
+
+            not_applicable：
+
+            当前素材是单独阶段素材，不要求包含其他阶段。
+
+
+            四、评分规则
+
+
+            1. detected_material_type为hook时：
+
+            hook.status为evaluated或partial。
+
+            intro和show为not_applicable，score必须为0。
+
+
+            2. detected_material_type为intro时：
+
+            intro.status为evaluated或partial。
+
+            hook和show为not_applicable，score必须为0。
+
+
+            3. detected_material_type为show时：
+
+            show.status为evaluated或partial。
+
+            hook和intro为not_applicable，score必须为0。
+
+
+            4. detected_material_type为full_ad时：
+
+            分别评价Hook、Intro、Show。
+
+            完全缺失的阶段标记为not_present，score为0。
+
+
+            5. detected_material_type为unknown时：
+
+            不得强行归类。
+
+            证据不足的阶段使用partial，明显无关的阶段使用not_applicable。
+
+
+            6. not_applicable阶段：
+
+            score必须为0。
+
+            evidence、problems和suggestions必须为空数组。
+
+
+            7. not_present阶段：
+
+            score必须为0。
+
+            evidence可以为空数组。
+
+            problems和suggestions应说明阶段缺失及补充方向。
+
+
+            8. overall_score只计算evaluated和partial阶段。
+
+            9. 不得把not_applicable阶段的0分计入overall_score。
+
+            10. 评分范围为0至10，允许一位小数。
+
+
+            五、评价维度
+
+
+            Hook重点评价：
+
+
+            1. 是否快速抓住注意力。
+
+            2. 是否存在冲突、痛点、反差、悬念或好奇心。
+
+            3. 是否给出继续观看的理由。
+
+            4. 画面主体和信息是否清晰。
+
+            5. 文字和画面是否相互支撑。
+
+
+            Intro重点评价：
+
+
+            1. 是否解释用户问题或使用场景。
+
+            2. 是否自然引入产品或解决方案。
+
+            3. 是否建立信任。
+
+            4. 是否形成信息递进。
+
+            5. 是否帮助用户理解继续观看的价值。
+
+
+            Show重点评价：
+
+
+            1. 产品是否清晰可见。
+
+            2. 功能和使用方式是否容易理解。
+
+            3. 核心卖点是否可感知。
+
+            4. 是否有产品效果、实际使用或前后对比。
+
+            5. 是否具有合理的购买或行动驱动力。
+
+            6. 如果该素材不是转化型素材，不得仅因为缺少价格或CTA而判为低分。
+
+
+            六、证据规则
+
+
+            1. 只能评价关键帧中真实可见的信息。
+
+            2. 不得猜测未出现的画面、产品、功能或品牌。
+
+            3. evidence必须描述画面中实际可见的内容。
+
+            4. 无法通过关键帧确认的音频、旁白、动态字幕、运镜和转场必须放入missing_information。
+
+            5. 不得把“无法确认”直接写成“完全没有”。
+
+            6. 不得编造产品名称、功能、价格、优惠、销量、用户数量、评分、认证或效果数据。
+
+            7. 建议需要举例时必须使用占位符，例如：
+
+            「[产品名称]」
+
+            「[核心功能]」
+
+            「[真实效果数据]」
+
+            「[实际优惠]」
+
+            8. 不得建议使用虚假评价、虚假销量或未经证实的效果数字。
+
+            9. classification_confidence表示素材类型判断置信度。
+
+            10. confidence表示本次视觉质量评价的证据充分程度。
+
+
+            七、结构化输出规则
+
+
+            1. 当前节点已经启用结构化输出，直接遵循Schema。
+
+            2. 不要输出Markdown代码块。
+
+            3. 不要在结果前后添加解释文字。
+
+            4. 所有字符串内部禁止使用英文半角双引号。
+
+            5. 引用广告文案时使用中文直角引号「」。
+
+            6. 不得在数组中输出JSON片段、字段名称或结束括号。
+
+            7. 每个数组元素必须是完整、独立的中文字符串。
+
+            8. 输出前检查所有字段均位于Schema规定层级。
+
+            9. 所有文字使用简体中文。'
+        - id: 29fd160a-3e9b-4362-af64-d4aa3321f8c7
+          role: user
+          text: '请评价以下广告素材。
+
+
+            用户指定的素材类型：
+
+            {{{#1785117643695.material_type#}}}
+
+
+            视频ID：
+
+            {{{#1785119074924.video_id#}}}
+
+
+            视频总时长：
+
+            {{{#1785119074924.duration_seconds#}}} 秒
+
+
+            关键帧与时间对应关系：
+
+            {{{#1785119074924.timeline#}}}
+
+
+            请先识别素材类型，再根据素材承担的广告功能进行评价。
+
+
+            当用户指定类型为auto时，自动识别素材类型。
+
+            当用户指定了明确类型时，以用户指定类型为主要评价对象。
+
+
+            不得仅根据视频时长判断素材类型。
+
+            不得要求单独的Hook、Intro或Show素材必须具备完整广告结构。
+
+            请严格遵循结构化输出Schema。'
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              classification_confidence:
+                maximum: 10
+                minimum: 0
+                type: number
+              classification_evidence:
+                items:
+                  type: string
+                type: array
+              confidence:
+                maximum: 10
+                minimum: 0
+                type: number
+              critical_problems:
+                items:
+                  type: string
+                type: array
+              detected_material_type:
+                enum:
+                - full_ad
+                - hook
+                - intro
+                - show
+                - unknown
+                type: string
+              hook:
+                additionalProperties: false
+                properties:
+                  evidence:
+                    items:
+                      type: string
+                    type: array
+                  problems:
+                    items:
+                      type: string
+                    type: array
+                  score:
+                    maximum: 10
+                    minimum: 0
+                    type: number
+                  status:
+                    enum:
+                    - evaluated
+                    - partial
+                    - not_present
+                    - not_applicable
+                    type: string
+                  suggestions:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - status
+                - score
+                - evidence
+                - problems
+                - suggestions
+                type: object
+              intro:
+                additionalProperties: false
+                properties:
+                  evidence:
+                    items:
+                      type: string
+                    type: array
+                  problems:
+                    items:
+                      type: string
+                    type: array
+                  score:
+                    maximum: 10
+                    minimum: 0
+                    type: number
+                  status:
+                    enum:
+                    - evaluated
+                    - partial
+                    - not_present
+                    - not_applicable
+                    type: string
+                  suggestions:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - status
+                - score
+                - evidence
+                - problems
+                - suggestions
+                type: object
+              missing_information:
+                items:
+                  type: string
+                type: array
+              overall_score:
+                maximum: 10
+                minimum: 0
+                type: number
+              show:
+                additionalProperties: false
+                properties:
+                  evidence:
+                    items:
+                      type: string
+                    type: array
+                  problems:
+                    items:
+                      type: string
+                    type: array
+                  score:
+                    maximum: 10
+                    minimum: 0
+                    type: number
+                  status:
+                    enum:
+                    - evaluated
+                    - partial
+                    - not_present
+                    - not_applicable
+                    type: string
+                  suggestions:
+                    items:
+                      type: string
+                    type: array
+                required:
+                - status
+                - score
+                - evidence
+                - problems
+                - suggestions
+                type: object
+              strengths:
+                items:
+                  type: string
+                type: array
+            required:
+            - detected_material_type
+            - classification_confidence
+            - classification_evidence
+            - overall_score
+            - hook
+            - intro
+            - show
+            - strengths
+            - critical_problems
+            - confidence
+            - missing_information
+            type: object
+        structured_output_enabled: true
+        title: LLM-Claude视觉评价
+        type: llm
+        vision:
+          configs:
+            detail: high
+            variable_selector:
+            - '1785119811971'
+            - output
+          enabled: true
+      height: 88
+      id: '1785120267932'
+      position:
+        x: 2141
+        y: 237
+      positionAbsolute:
+        x: 2141
+        y: 237
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            max_tokens: 6000
+            temperature: 0.4
+          mode: chat
+          name: claude-opus-4-8
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - id: c7140de7-9523-44e1-a3fc-18e5fa30e531
+          role: system
+          text: "你是一名短视频广告优化策略师、脚本编辑和Prompt工程师。\n\n你会收到一份由视觉评价节点生成的结构化广告质量报告。\n\n\
+            你的任务是根据视觉评价中的素材类型、视觉证据、问题和建议，生成可执行的优化方案。\n\n一、优化目标\n\n1. 根据detected_material_type确定主要优化对象。\n\
+            2. 如果素材类型为hook，只优化Hook，不得强行补写完整Intro和Show。\n3. 如果素材类型为intro，只优化Intro及其信息递进。\n\
+            4. 如果素材类型为show，只优化产品展示、卖点表达和购买驱动力。\n5. 如果素材类型为full_ad，可以重新规划完整Hook、Intro、Show结构。\n\
+            6. 如果素材类型为unknown，优先提出补充信息和低风险优化建议，不得强行假设产品类型。\n\n二、证据约束\n\n1. 所有问题必须来自视觉评价中的problems或critical_problems。\n\
+            2. 所有优化动作必须能够追溯到视觉评价中的evidence或suggestions。\n3. 不得编造产品名称、品牌、功能、价格、优惠、销量、用户数量、评分、认证或效果数据。\n\
+            4. 不得自行假设产品类型。\n5. 缺失业务信息必须使用占位符：\n\n[产品名称]\n[产品类型]\n[核心功能]\n[目标用户]\n\
+            [真实效果数据]\n[真实用户评价]\n[实际价格]\n[实际优惠]\n[行动链接]\n\n6. 不得生成未经验证的数字，例如：\n效率提升85%\n\
+            CTR提升50%\n50万用户正在使用\n音质提升40%\n\n7. 如需表达数据，应写为：\n「[真实效果数据]」\n或：\n「实际效果需通过A/B测试验证」\n\
+            \n8. 不得建议伪造用户评价、销量、认证、倒计时或优惠信息。\n9. 不得把模型推测写成产品事实。\n\n三、优先行动\n\n1. priority_actions按照重要程度排序。\n\
+            2. 每项必须包含具体问题、修改动作、依据和预期效果。\n3. expected_effect必须使用定性表达。\n4. 禁止承诺具体提升百分比。\n\
+            \n四、备选方案\n\n1. variants生成5个不同策略角度的方案。\n2. 如果是hook素材，5个方案应采用不同Hook机制：\n\
+            痛点、冲突、悬念、反差、结果导向。\n3. 如果是intro素材，5个方案应采用不同的信息解释或信任建立方式。\n4. 如果是show素材，5个方案应采用不同的产品展示或卖点证明方式。\n\
+            5. 不得只做同义句改写。\n6. 每个方案都必须说明画面、文案和策略理由。\n\n五、优化脚本\n\n1. revised_script应针对当前上传素材的类型和合理时长进行修改。\n\
+            2. 不得因为素材只有4秒就擅自扩写成15秒完整广告。\n3. 如果上传的是4秒Hook，优先输出约4秒的新版Hook脚本。\n4. 如果用户上传的是完整广告，才可以重新规划完整时间轴。\n\
+            5. start_seconds和end_seconds必须连续、合理，且不得互相重叠。\n6. on_screen_text、voiceover和visual必须使用占位符处理未知产品信息。\n\
+            \n六、生成Prompt\n\n1. visual_prompt必须可直接交给视频生成模型使用。\n2. Prompt必须保留当前素材的目标阶段。\n\
+            3. 不得擅自改变产品类型。\n4. 对未知产品信息使用占位符。\n5. negative_constraints必须包含避免虚假数据、未授权Logo、无关画面和文字过载等限制。\n\
+            \n七、A/B测试\n\n1. 每组测试只能改变一个核心变量。\n2. control和variant除被测试变量外应尽量保持一致。\n3.\
+            \ metric可使用前3秒留存、完播率、点击率、转化率等指标。\n4. 不得预测具体提升百分比。\n5. 测试结果必须通过真实投放数据验证。\n\
+            \n八、输出规则\n\n1. 当前节点已启用结构化输出，直接遵循Schema。\n2. 不要输出Markdown代码块。\n3. 不要输出额外解释。\n\
+            4. 字符串内部禁止使用英文半角双引号。\n5. 引用文案使用中文直角引号「」。\n6. 每个数组元素必须完整独立。\n7. 所有文字使用简体中文。\n\
+            \n产品信息约束补充：\n\n1. 视觉场景只能用于判断使用环境，不能用于推断具体产品功能。\n2. 看到音乐工作室，不代表产品一定是音色搜索、AI编曲、混音、插件管理或音乐生成工具。\n\
+            3. 当产品类型、核心功能和目标用户没有由用户明确提供时，所有产品相关文案必须使用占位符。\n4. 禁止自行生成「找音色」「AI一键生成」「智能混音」等具体功能描述。\n\
+            5. 禁止自行生成「10个插件」「3分钟完成」「5分钟灵感」等未经用户提供的具体数字。\n6. 合法示例：\n   「还在为[具体痛点]浪费时间？」\n\
+            \   「[产品名称]帮助你完成[核心功能]」\n   「看看[核心功能]如何改变创作流程」\n7. 只有用户输入明确提供产品信息后，才能将占位符替换为具体文案。"
+        - id: 4a241f1f-41fa-413d-ad92-f33b6816b80c
+          role: user
+          text: '请根据以下视觉评价生成广告素材优化方案。
+
+
+            视频ID：
+
+            {{{#1785119074924.video_id#}}}
+
+
+            视频时长：
+
+            {{{#1785119074924.duration_seconds#}}} 秒
+
+
+            用户指定素材类型：
+
+            {{{#1785117643695.material_type#}}}
+
+
+            Claude视觉评价：
+
+            {{{#1785120267932.structured_output#}}}
+
+
+            请严格依据视觉评价进行优化。
+
+
+            不得编造视觉评价中不存在的产品事实。
+
+            不得强行把单独阶段素材改写成完整广告。
+
+            未知业务信息必须使用占位符。
+
+            请严格遵循结构化输出Schema。'
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              ab_tests:
+                items:
+                  additionalProperties: false
+                  properties:
+                    control:
+                      type: string
+                    metric:
+                      type: string
+                    only_changed_variable:
+                      type: string
+                    test_name:
+                      type: string
+                    variant:
+                      type: string
+                  required:
+                  - test_name
+                  - control
+                  - variant
+                  - only_changed_variable
+                  - metric
+                  type: object
+                type: array
+              generation_prompt:
+                additionalProperties: false
+                properties:
+                  negative_constraints:
+                    items:
+                      type: string
+                    type: array
+                  visual_prompt:
+                    type: string
+                required:
+                - visual_prompt
+                - negative_constraints
+                type: object
+              optimization_summary:
+                type: string
+              optimization_target:
+                enum:
+                - full_ad
+                - hook
+                - intro
+                - show
+                - unknown
+                type: string
+              priority_actions:
+                items:
+                  additionalProperties: false
+                  properties:
+                    action:
+                      type: string
+                    evidence_basis:
+                      type: string
+                    expected_effect:
+                      type: string
+                    priority:
+                      type: integer
+                    problem:
+                      type: string
+                  required:
+                  - priority
+                  - problem
+                  - evidence_basis
+                  - action
+                  - expected_effect
+                  type: object
+                type: array
+              revised_script:
+                items:
+                  additionalProperties: false
+                  properties:
+                    end_seconds:
+                      type: number
+                    on_screen_text:
+                      type: string
+                    stage:
+                      type: string
+                    start_seconds:
+                      type: number
+                    visual:
+                      type: string
+                    voiceover:
+                      type: string
+                  required:
+                  - start_seconds
+                  - end_seconds
+                  - stage
+                  - visual
+                  - voiceover
+                  - on_screen_text
+                  type: object
+                type: array
+              variants:
+                items:
+                  additionalProperties: false
+                  properties:
+                    copy:
+                      type: string
+                    name:
+                      type: string
+                    reason:
+                      type: string
+                    strategy:
+                      type: string
+                    suggested_duration_seconds:
+                      type: number
+                    visual:
+                      type: string
+                  required:
+                  - name
+                  - strategy
+                  - visual
+                  - copy
+                  - reason
+                  - suggested_duration_seconds
+                  type: object
+                type: array
+            required:
+            - optimization_target
+            - optimization_summary
+            - priority_actions
+            - variants
+            - revised_script
+            - generation_prompt
+            - ab_tests
+            type: object
+        structured_output_enabled: true
+        title: LLM 2-Claude优化方案
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1785123203227'
+      position:
+        x: 2486.639015821546
+        y: 237
+      positionAbsolute:
+        x: 2486.639015821546
+        y: 237
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        outputs:
+        - value_selector:
+          - '1785119074924'
+          - video_id
+          value_type: string
+          variable: video_id
+        - value_selector:
+          - '1785119074924'
+          - duration_seconds
+          value_type: number
+          variable: duration_seconds
+        - value_selector:
+          - '1785120267932'
+          - structured_output
+          value_type: object
+          variable: analysis
+        - value_selector:
+          - '1785123203227'
+          - structured_output
+          value_type: object
+          variable: optimization
+        - value_selector:
+          - '1785135338579'
+          - output
+          value_type: string
+          variable: report_markdown
+        selected: true
+        title: 输出 -广告分析报告
+        type: end
+      height: 192
+      id: '1785123588776'
+      position:
+        x: 3142
+        y: 243
+      positionAbsolute:
+        x: 3142
+        y: 243
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        outputs:
+        - value_selector:
+          - '1785118484972'
+          - error_message
+          value_type: string
+          variable: failure
+        selected: false
+        title: '失败输出 '
+        type: end
+      height: 88
+      id: '1785133040610'
+      position:
+        x: 892
+        y: 594
+      positionAbsolute:
+        x: 892
+        y: 594
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        selected: false
+        template: "# AI广告素材质量分析报告\r\n\r\n## 素材信息\r\n\r\n- 视频ID：{{ video_id }}\r\n\
+          - 视频时长：{{ duration }} 秒\r\n- 用户素材类型：{{ analysis.detected_material_type }}\r\
+          \n- 类型判断置信度：{{ analysis.classification_confidence }}/10\r\n- 综合评分：{{ analysis.overall_score\
+          \ }}/10\r\n- 评价证据置信度：{{ analysis.confidence }}/10\r\n\r\n## 素材类型判断\r\n\r\
+          \n{% for item in analysis.classification_evidence %}\r\n- {{ item }}\r\n\
+          {% endfor %}\r\n\r\n## 阶段评分\r\n\r\n### Hook\r\n\r\n{% if analysis.hook.status\
+          \ == \"evaluated\" %}\r\n- 状态：已评价\r\n- 评分：{{ analysis.hook.score }}/10\r\
+          \n{% elif analysis.hook.status == \"partial\" %}\r\n- 状态：部分评价，证据有限\r\n-\
+          \ 评分：{{ analysis.hook.score }}/10\r\n{% elif analysis.hook.status == \"\
+          not_present\" %}\r\n- 状态：完整广告中缺少Hook阶段\r\n{% else %}\r\n- 状态：不适用于当前素材\r\n\
+          {% endif %}\r\n\r\n{% if analysis.hook.status != \"not_applicable\" %}\r\
+          \n\r\n**判断依据**\r\n\r\n{% for item in analysis.hook.evidence %}\r\n- {{ item\
+          \ }}\r\n{% endfor %}\r\n\r\n**主要问题**\r\n\r\n{% for item in analysis.hook.problems\
+          \ %}\r\n- {{ item }}\r\n{% endfor %}\r\n\r\n**优化建议**\r\n\r\n{% for item\
+          \ in analysis.hook.suggestions %}\r\n- {{ item }}\r\n{% endfor %}\r\n\r\n\
+          {% endif %}\r\n\r\n### Intro\r\n\r\n{% if analysis.intro.status == \"evaluated\"\
+          \ %}\r\n- 状态：已评价\r\n- 评分：{{ analysis.intro.score }}/10\r\n{% elif analysis.intro.status\
+          \ == \"partial\" %}\r\n- 状态：部分评价，证据有限\r\n- 评分：{{ analysis.intro.score }}/10\r\
+          \n{% elif analysis.intro.status == \"not_present\" %}\r\n- 状态：完整广告中缺少Intro阶段\r\
+          \n{% else %}\r\n- 状态：不适用于当前素材\r\n{% endif %}\r\n\r\n{% if analysis.intro.status\
+          \ != \"not_applicable\" %}\r\n\r\n**判断依据**\r\n\r\n{% for item in analysis.intro.evidence\
+          \ %}\r\n- {{ item }}\r\n{% endfor %}\r\n\r\n**主要问题**\r\n\r\n{% for item\
+          \ in analysis.intro.problems %}\r\n- {{ item }}\r\n{% endfor %}\r\n\r\n\
+          **优化建议**\r\n\r\n{% for item in analysis.intro.suggestions %}\r\n- {{ item\
+          \ }}\r\n{% endfor %}\r\n\r\n{% endif %}\r\n\r\n### Show\r\n\r\n{% if analysis.show.status\
+          \ == \"evaluated\" %}\r\n- 状态：已评价\r\n- 评分：{{ analysis.show.score }}/10\r\
+          \n{% elif analysis.show.status == \"partial\" %}\r\n- 状态：部分评价，证据有限\r\n-\
+          \ 评分：{{ analysis.show.score }}/10\r\n{% elif analysis.show.status == \"\
+          not_present\" %}\r\n- 状态：完整广告中缺少Show阶段\r\n{% else %}\r\n- 状态：不适用于当前素材\r\n\
+          {% endif %}\r\n\r\n{% if analysis.show.status != \"not_applicable\" %}\r\
+          \n\r\n**判断依据**\r\n\r\n{% for item in analysis.show.evidence %}\r\n- {{ item\
+          \ }}\r\n{% endfor %}\r\n\r\n**主要问题**\r\n\r\n{% for item in analysis.show.problems\
+          \ %}\r\n- {{ item }}\r\n{% endfor %}\r\n\r\n**优化建议**\r\n\r\n{% for item\
+          \ in analysis.show.suggestions %}\r\n- {{ item }}\r\n{% endfor %}\r\n\r\n\
+          {% endif %}\r\n\r\n## 素材优势\r\n\r\n{% for item in analysis.strengths %}\r\
+          \n- {{ item }}\r\n{% endfor %}\r\n\r\n## 核心问题\r\n\r\n{% for item in analysis.critical_problems\
+          \ %}\r\n- {{ item }}\r\n{% endfor %}\r\n\r\n## 暂时无法确认的信息\r\n\r\n{% for item\
+          \ in analysis.missing_information %}\r\n- {{ item }}\r\n{% endfor %}\r\n\
+          \r\n---\r\n\r\n# 优化方案\r\n\r\n- 优化目标：{{ optimization.optimization_target\
+          \ }}\r\n\r\n## 优化总结\r\n\r\n{{ optimization.optimization_summary }}\r\n\r\
+          \n## 优先修改动作\r\n\r\n{% for item in optimization.priority_actions %}\r\n\r\
+          \n### 优先级 {{ item.priority }}\r\n\r\n- 问题：{{ item.problem }}\r\n- 评价依据：{{\
+          \ item.evidence_basis }}\r\n- 修改动作：{{ item.action }}\r\n- 预期效果：{{ item.expected_effect\
+          \ }}\r\n\r\n{% endfor %}\r\n\r\n## 备选创意方案\r\n\r\n{% for item in optimization.variants\
+          \ %}\r\n\r\n### 方案 {{ loop.index }}｜{{ item.name }}\r\n\r\n- 策略角度：{{ item.strategy\
+          \ }}\r\n- 建议文案：{{ item[\"copy\"] }}\r\n- 画面设计：{{ item.visual }}\r\n- 采用理由：{{\
+          \ item.reason }}\r\n- 建议时长：{{ item.suggested_duration_seconds }}秒\r\n\r\n\
+          {% endfor %}\r\n\r\n## 新版素材脚本\r\n\r\n{% for item in optimization.revised_script\
+          \ %}\r\n\r\n### {{ item.start_seconds }}–{{ item.end_seconds }}秒｜{{ item.stage\
+          \ }}\r\n\r\n- 画面：{{ item.visual }}\r\n- 旁白：{{ item.voiceover }}\r\n- 屏幕文字：{{\
+          \ item.on_screen_text }}\r\n\r\n{% endfor %}\r\n\r\n## 视频生成Prompt\r\n\r\n\
+          {{ optimization.generation_prompt.visual_prompt }}\r\n\r\n### 负面限制\r\n\r\
+          \n{% for item in optimization.generation_prompt.negative_constraints %}\r\
+          \n- {{ item }}\r\n{% endfor %}\r\n\r\n## A/B测试方案\r\n\r\n{% for item in optimization.ab_tests\
+          \ %}\r\n\r\n### {{ item.test_name }}\r\n\r\n- 对照组：{{ item.control }}\r\n\
+          - 实验组：{{ item.variant }}\r\n- 单一变量：{{ item.only_changed_variable }}\r\n\
+          - 观察指标：{{ item.metric }}\r\n\r\n{% endfor %}"
+        title: 模板转换 2
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1785119074924'
+          - video_id
+          value_type: string
+          variable: video_id
+        - value_selector:
+          - '1785119074924'
+          - duration_seconds
+          value_type: number
+          variable: duration
+        - value_selector:
+          - '1785120267932'
+          - structured_output
+          value_type: object
+          variable: analysis
+        - value_selector:
+          - '1785123203227'
+          - structured_output
+          value_type: object
+          variable: optimization
+      height: 52
+      id: '1785135338579'
+      position:
+        x: 2770
+        y: 250
+      positionAbsolute:
+        x: 2770
+        y: 250
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    viewport:
+      x: -2208.6064880352533
+      y: 178.8833590426139
+      zoom: 0.8705505632961242
+  rag_pipeline_variables: []
