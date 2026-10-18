@@ -1,0 +1,2452 @@
+{
+  "app": {
+    "description": "Dify 1.15 controlled advertising-analysis Agent V1 candidate",
+    "icon": "🤖",
+    "icon_background": "#E4FBCC",
+    "icon_type": "emoji",
+    "mode": "workflow",
+    "name": "AI-Ad-QA Agent V1 - CANDIDATE",
+    "use_icon_as_answer_icon": false
+  },
+  "dependencies": [
+    {
+      "current_identifier": null,
+      "type": "marketplace",
+      "value": {
+        "marketplace_plugin_unique_identifier": "langgenius/deepseek:0.0.24@9e12eef09973667f0eaf4f082af883167e1de88740b22e71e71488d020c3778a",
+        "version": null
+      }
+    }
+  ],
+  "kind": "app",
+  "version": "0.6.0",
+  "workflow": {
+    "conversation_variables": [],
+    "environment_variables": [],
+    "features": {
+      "file_upload": {
+        "enabled": false
+      },
+      "opening_statement": "",
+      "retriever_resource": {
+        "enabled": true
+      },
+      "sensitive_word_avoidance": {
+        "enabled": false
+      },
+      "speech_to_text": {
+        "enabled": false
+      },
+      "suggested_questions": [],
+      "suggested_questions_after_answer": {
+        "enabled": false
+      },
+      "text_to_speech": {
+        "enabled": false,
+        "language": "",
+        "voice": ""
+      }
+    },
+    "graph": {
+      "edges": [
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "llm",
+            "targetType": "code"
+          },
+          "id": "1900000000020-source-1900000000030-target",
+          "source": "1900000000020",
+          "sourceHandle": "source",
+          "target": "1900000000030",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "code",
+            "targetType": "assigner"
+          },
+          "id": "1900000000030-source-1900000000040-target",
+          "source": "1900000000030",
+          "sourceHandle": "source",
+          "target": "1900000000040",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "llm",
+            "targetType": "code"
+          },
+          "id": "1900000000021-source-1900000000031-target",
+          "source": "1900000000021",
+          "sourceHandle": "source",
+          "target": "1900000000031",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "code",
+            "targetType": "assigner"
+          },
+          "id": "1900000000031-source-1900000000041-target",
+          "source": "1900000000031",
+          "sourceHandle": "source",
+          "target": "1900000000041",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "http-request",
+            "targetType": "code"
+          },
+          "id": "1900000000022-source-1900000000032-target",
+          "source": "1900000000022",
+          "sourceHandle": "source",
+          "target": "1900000000032",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "code",
+            "targetType": "assigner"
+          },
+          "id": "1900000000032-source-1900000000042-target",
+          "source": "1900000000032",
+          "sourceHandle": "source",
+          "target": "1900000000042",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "llm",
+            "targetType": "code"
+          },
+          "id": "1900000000023-source-1900000000033-target",
+          "source": "1900000000023",
+          "sourceHandle": "source",
+          "target": "1900000000033",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "code",
+            "targetType": "assigner"
+          },
+          "id": "1900000000033-source-1900000000043-target",
+          "source": "1900000000033",
+          "sourceHandle": "source",
+          "target": "1900000000043",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "start",
+            "targetType": "http-request"
+          },
+          "id": "1900000000001-source-1900000000002-target",
+          "source": "1900000000001",
+          "sourceHandle": "source",
+          "target": "1900000000002",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "http-request",
+            "targetType": "code"
+          },
+          "id": "1900000000002-source-1900000000003-target",
+          "source": "1900000000002",
+          "sourceHandle": "source",
+          "target": "1900000000003",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "if-else"
+          },
+          "id": "1900000000003-source-1900000000004-target",
+          "source": "1900000000003",
+          "sourceHandle": "source",
+          "target": "1900000000004",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "if-else",
+            "targetType": "iteration"
+          },
+          "id": "1900000000004-true-1900000000007-target",
+          "source": "1900000000004",
+          "sourceHandle": "true",
+          "target": "1900000000007",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "if-else",
+            "targetType": "template-transform"
+          },
+          "id": "1900000000004-false-1900000000005-target",
+          "source": "1900000000004",
+          "sourceHandle": "false",
+          "target": "1900000000005",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "template-transform",
+            "targetType": "end"
+          },
+          "id": "1900000000005-source-1900000000006-target",
+          "source": "1900000000005",
+          "sourceHandle": "source",
+          "target": "1900000000006",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "iteration-start",
+            "targetType": "http-request"
+          },
+          "id": "1900000000008-source-1900000000009-target",
+          "source": "1900000000008",
+          "sourceHandle": "source",
+          "target": "1900000000009",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "iteration",
+            "targetType": "loop"
+          },
+          "id": "1900000000007-source-1900000000010-target",
+          "source": "1900000000007",
+          "sourceHandle": "source",
+          "target": "1900000000010",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "loop-start",
+            "targetType": "llm"
+          },
+          "id": "1900000000010start-source-1900000000011-target",
+          "source": "1900000000010start",
+          "sourceHandle": "source",
+          "target": "1900000000011",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "llm",
+            "targetType": "code"
+          },
+          "id": "1900000000011-source-1900000000012-target",
+          "source": "1900000000011",
+          "sourceHandle": "source",
+          "target": "1900000000012",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "code",
+            "targetType": "if-else"
+          },
+          "id": "1900000000012-source-1900000000013-target",
+          "source": "1900000000012",
+          "sourceHandle": "source",
+          "target": "1900000000013",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "if-else",
+            "targetType": "llm"
+          },
+          "id": "1900000000013-true-1900000000020-target",
+          "source": "1900000000013",
+          "sourceHandle": "true",
+          "target": "1900000000020",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "if-else",
+            "targetType": "if-else"
+          },
+          "id": "1900000000013-false-1900000000014-target",
+          "source": "1900000000013",
+          "sourceHandle": "false",
+          "target": "1900000000014",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "if-else",
+            "targetType": "llm"
+          },
+          "id": "1900000000014-true-1900000000021-target",
+          "source": "1900000000014",
+          "sourceHandle": "true",
+          "target": "1900000000021",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "if-else",
+            "targetType": "if-else"
+          },
+          "id": "1900000000014-false-1900000000015-target",
+          "source": "1900000000014",
+          "sourceHandle": "false",
+          "target": "1900000000015",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "if-else",
+            "targetType": "http-request"
+          },
+          "id": "1900000000015-true-1900000000022-target",
+          "source": "1900000000015",
+          "sourceHandle": "true",
+          "target": "1900000000022",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "if-else",
+            "targetType": "if-else"
+          },
+          "id": "1900000000015-false-1900000000016-target",
+          "source": "1900000000015",
+          "sourceHandle": "false",
+          "target": "1900000000016",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "if-else",
+            "targetType": "llm"
+          },
+          "id": "1900000000016-true-1900000000023-target",
+          "source": "1900000000016",
+          "sourceHandle": "true",
+          "target": "1900000000023",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "if-else",
+            "targetType": "code"
+          },
+          "id": "1900000000016-false-1900000000024-target",
+          "source": "1900000000016",
+          "sourceHandle": "false",
+          "target": "1900000000024",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "sourceType": "code",
+            "targetType": "assigner"
+          },
+          "id": "1900000000024-source-1900000000044-target",
+          "source": "1900000000024",
+          "sourceHandle": "source",
+          "target": "1900000000044",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 1002
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "loop",
+            "targetType": "http-request"
+          },
+          "id": "1900000000010-source-1900000000050-target",
+          "source": "1900000000010",
+          "sourceHandle": "source",
+          "target": "1900000000050",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "http-request",
+            "targetType": "template-transform"
+          },
+          "id": "1900000000050-source-1900000000051-target",
+          "source": "1900000000050",
+          "sourceHandle": "source",
+          "target": "1900000000051",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "http-request",
+            "targetType": "template-transform"
+          },
+          "id": "1900000000050-fail-branch-1900000000051-target",
+          "source": "1900000000050",
+          "sourceHandle": "fail-branch",
+          "target": "1900000000051",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "template-transform",
+            "targetType": "end"
+          },
+          "id": "1900000000051-source-1900000000052-target",
+          "source": "1900000000051",
+          "sourceHandle": "source",
+          "target": "1900000000052",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        }
+      ],
+      "nodes": [
+        {
+          "data": {
+            "title": "用户输入",
+            "type": "start",
+            "selected": false,
+            "variables": [
+              {
+                "allowed_file_extensions": [
+                  ".MP4",
+                  ".MOV",
+                  ".WEBM"
+                ],
+                "allowed_file_types": [
+                  "video"
+                ],
+                "allowed_file_upload_methods": [
+                  "local_file"
+                ],
+                "default": "",
+                "hide": false,
+                "hint": "",
+                "label": "广告视频",
+                "options": [],
+                "placeholder": "",
+                "required": true,
+                "type": "file",
+                "variable": "video"
+              },
+              {
+                "default": "auto",
+                "hide": false,
+                "hint": "",
+                "label": "素材类型",
+                "max_length": 32,
+                "options": [],
+                "placeholder": "auto/hook/intro/show/full_ad",
+                "required": true,
+                "type": "text-input",
+                "variable": "material_type"
+              },
+              {
+                "default": "",
+                "hide": false,
+                "hint": "",
+                "label": "广告文案",
+                "max_length": 10000,
+                "options": [],
+                "placeholder": "可留空",
+                "required": false,
+                "type": "paragraph",
+                "variable": "ad_script"
+              },
+              {
+                "default": "",
+                "hide": false,
+                "hint": "",
+                "label": "产品信息",
+                "max_length": 10000,
+                "options": [],
+                "placeholder": "产品、受众和目标",
+                "required": false,
+                "type": "paragraph",
+                "variable": "product_context"
+              }
+            ]
+          },
+          "height": 220,
+          "id": "1900000000001",
+          "position": {
+            "x": 40,
+            "y": 360
+          },
+          "positionAbsolute": {
+            "x": 40,
+            "y": 360
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "创建 Agent 视频任务",
+            "type": "http-request",
+            "selected": false,
+            "authorization": {
+              "config": null,
+              "type": "no-auth"
+            },
+            "body": {
+              "type": "form-data",
+              "data": [
+                {
+                  "id": "video-url",
+                  "key": "video_url",
+                  "type": "text",
+                  "value": "{{#1900000000001.video.url#}}"
+                }
+              ]
+            },
+            "headers": "",
+            "method": "post",
+            "params": "",
+            "retry_config": {
+              "max_retries": 1,
+              "retry_enabled": true,
+              "retry_interval": 1000
+            },
+            "ssl_verify": true,
+            "timeout": {
+              "connect": 10,
+              "read": 120,
+              "write": 120,
+              "max_connect_timeout": 0,
+              "max_read_timeout": 0,
+              "max_write_timeout": 0
+            },
+            "url": "http://host.docker.internal:8000/api/v1/agent-videos",
+            "variables": []
+          },
+          "height": 90,
+          "id": "1900000000002",
+          "position": {
+            "x": 340,
+            "y": 360
+          },
+          "positionAbsolute": {
+            "x": 340,
+            "y": 360
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "解析并初始化状态",
+            "type": "code",
+            "selected": false,
+            "code": "import json\ndef main(body, status_code):\n    try:\n        data = json.loads(body) if isinstance(body, str) else body\n        frames = data.get(\"frames\", []) if 200 <= int(status_code) < 300 else []\n        urls = [str(x.get(\"url\", \"\")) for x in frames if x.get(\"url\")]\n        state = {\"video_id\": str(data.get(\"video_id\", \"\")), \"duration_seconds\": float(data.get(\"duration_seconds\", 0)), \"current_step\": 0, \"completed_actions\": [], \"used_timestamps\": [float(x.get(\"timestamp_seconds\", 0)) for x in frames], \"visual_evidence\": [], \"script_evidence\": [], \"missing_dimensions\": [], \"errors\": [], \"retry_count\": 0, \"supplementary_rounds\": 0, \"needs_human_review\": False, \"final_status\": \"running\"}\n        return {\"success\": bool(urls and state[\"video_id\"]), \"error\": \"\" if urls else str(data.get(\"detail\", \"未返回关键帧\")), \"video_id\": state[\"video_id\"], \"frame_urls\": urls, \"state_json\": json.dumps(state, ensure_ascii=False)}\n    except Exception as exc:\n        return {\"success\": False, \"error\": f\"解析失败：{exc}\", \"video_id\": \"\", \"frame_urls\": [], \"state_json\": \"{}\"}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "1900000000002",
+                  "body"
+                ],
+                "value_type": "string",
+                "variable": "body"
+              },
+              {
+                "value_selector": [
+                  "1900000000002",
+                  "status_code"
+                ],
+                "value_type": "number",
+                "variable": "status_code"
+              }
+            ],
+            "outputs": {
+              "success": {
+                "children": null,
+                "type": "boolean"
+              },
+              "error": {
+                "children": null,
+                "type": "string"
+              },
+              "video_id": {
+                "children": null,
+                "type": "string"
+              },
+              "frame_urls": {
+                "children": null,
+                "type": "array[string]"
+              },
+              "state_json": {
+                "children": null,
+                "type": "string"
+              }
+            }
+          },
+          "height": 90,
+          "id": "1900000000003",
+          "position": {
+            "x": 640,
+            "y": 360
+          },
+          "positionAbsolute": {
+            "x": 640,
+            "y": 360
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "创建成功？",
+            "type": "if-else",
+            "selected": false,
+            "cases": [
+              {
+                "case_id": "true",
+                "id": "true",
+                "logical_operator": "and",
+                "conditions": [
+                  {
+                    "comparison_operator": "is",
+                    "id": "8f5c64dc-0fce-48c3-b46d-b1dfd626edb6",
+                    "value": true,
+                    "varType": "boolean",
+                    "variable_selector": [
+                      "1900000000003",
+                      "success"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "height": 90,
+          "id": "1900000000004",
+          "position": {
+            "x": 940,
+            "y": 360
+          },
+          "positionAbsolute": {
+            "x": 940,
+            "y": 360
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "失败说明",
+            "type": "template-transform",
+            "selected": false,
+            "template": "Agent 视频任务创建失败：{{ error }}",
+            "variables": [
+              {
+                "value_selector": [
+                  "1900000000003",
+                  "error"
+                ],
+                "value_type": "string",
+                "variable": "error"
+              }
+            ]
+          },
+          "height": 90,
+          "id": "1900000000005",
+          "position": {
+            "x": 1240,
+            "y": 590
+          },
+          "positionAbsolute": {
+            "x": 1240,
+            "y": 590
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "失败输出",
+            "type": "end",
+            "selected": false,
+            "outputs": [
+              {
+                "value_selector": [
+                  "1900000000005",
+                  "output"
+                ],
+                "value_type": "string",
+                "variable": "result"
+              }
+            ]
+          },
+          "height": 90,
+          "id": "1900000000006",
+          "position": {
+            "x": 1540,
+            "y": 590
+          },
+          "positionAbsolute": {
+            "x": 1540,
+            "y": 590
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "下载初始关键帧",
+            "type": "iteration",
+            "selected": false,
+            "error_handle_mode": "terminated",
+            "flatten_output": true,
+            "is_parallel": true,
+            "iterator_input_type": "array[string]",
+            "iterator_selector": [
+              "1900000000003",
+              "frame_urls"
+            ],
+            "output_selector": [
+              "1900000000009",
+              "files"
+            ],
+            "output_type": "array[file]",
+            "parallel_nums": 3,
+            "start_node_id": "1900000000008",
+            "width": 520,
+            "height": 210
+          },
+          "height": 210,
+          "id": "1900000000007",
+          "position": {
+            "x": 1240,
+            "y": 260
+          },
+          "positionAbsolute": {
+            "x": 1240,
+            "y": 260
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 520,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "",
+            "type": "iteration-start",
+            "selected": false,
+            "desc": "",
+            "isInIteration": true
+          },
+          "height": 48,
+          "id": "1900000000008",
+          "position": {
+            "x": 24,
+            "y": 68
+          },
+          "positionAbsolute": {
+            "x": 24,
+            "y": 68
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom-iteration-start",
+          "width": 44,
+          "zIndex": 1001,
+          "parentId": "1900000000007",
+          "draggable": false,
+          "selectable": false
+        },
+        {
+          "data": {
+            "title": "下载单张关键帧",
+            "type": "http-request",
+            "selected": false,
+            "authorization": {
+              "config": null,
+              "type": "no-auth"
+            },
+            "body": {
+              "data": [],
+              "type": "none"
+            },
+            "headers": "",
+            "method": "get",
+            "params": "",
+            "retry_config": {
+              "max_retries": 1,
+              "retry_enabled": true,
+              "retry_interval": 1000
+            },
+            "ssl_verify": true,
+            "timeout": {
+              "connect": 10,
+              "read": 120,
+              "write": 120,
+              "max_connect_timeout": 0,
+              "max_read_timeout": 0,
+              "max_write_timeout": 0
+            },
+            "url": "{{#1900000000007.item#}}",
+            "variables": [],
+            "isInIteration": true,
+            "isInLoop": false,
+            "iteration_id": "1900000000007"
+          },
+          "height": 125,
+          "id": "1900000000009",
+          "position": {
+            "x": 128,
+            "y": 68
+          },
+          "positionAbsolute": {
+            "x": 128,
+            "y": 68
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1001,
+          "parentId": "1900000000007"
+        },
+        {
+          "data": {
+            "title": "受控 Agent 循环",
+            "type": "loop",
+            "selected": false,
+            "break_conditions": [
+              {
+                "comparison_operator": "is not",
+                "id": "b0a849fe-db69-427a-9a51-3eaaceb00027",
+                "value": "running",
+                "varType": "string",
+                "variable_selector": [
+                  "1900000000010",
+                  "final_status"
+                ]
+              }
+            ],
+            "error_handle_mode": "terminated",
+            "logical_operator": "and",
+            "loop_count": 5,
+            "loop_variables": [
+              {
+                "id": "f80ea68e-b98f-4253-941c-159801fa4be1",
+                "label": "state_json",
+                "value": [
+                  "1900000000003",
+                  "state_json"
+                ],
+                "value_type": "variable",
+                "var_type": "string"
+              },
+              {
+                "id": "1d3f0324-f9b7-4af5-91fd-671fa4a3bd1a",
+                "label": "final_status",
+                "value": "running",
+                "value_type": "constant",
+                "var_type": "string"
+              }
+            ],
+            "start_node_id": "1900000000010start",
+            "width": 3300,
+            "height": 850
+          },
+          "height": 850,
+          "id": "1900000000010",
+          "position": {
+            "x": 1840,
+            "y": 150
+          },
+          "positionAbsolute": {
+            "x": 1840,
+            "y": 150
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 3300,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "",
+            "type": "loop-start",
+            "selected": false,
+            "desc": "",
+            "isInLoop": true
+          },
+          "height": 48,
+          "id": "1900000000010start",
+          "position": {
+            "x": 24,
+            "y": 70
+          },
+          "positionAbsolute": {
+            "x": 24,
+            "y": 70
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom-loop-start",
+          "width": 44,
+          "zIndex": 1002,
+          "parentId": "1900000000010",
+          "draggable": false,
+          "selectable": false
+        },
+        {
+          "data": {
+            "title": "Agent 决策",
+            "type": "llm",
+            "selected": false,
+            "context": {
+              "enabled": false,
+              "variable_selector": []
+            },
+            "model": {
+              "provider": "langgenius/deepseek/deepseek",
+              "name": "deepseek-flash",
+              "mode": "chat",
+              "completion_params": {
+                "temperature": 0.1
+              }
+            },
+            "prompt_template": [
+              {
+                "id": "259a2c1a-e796-4e6a-890f-afd8034fa14b",
+                "role": "system",
+                "text": "你是广告分析流程的控制器。只选择下一步动作，不直接写最终报告。\n允许动作：analyze_frames, extract_additional_frames, check_ad_script, generate_optimization_plan, stop。\n硬规则：最多一次补帧；视觉分析最多两次；文案检查和优化方案最多一次；final_status 非 running 时必须 stop；未知或不安全情况 stop 并 should_stop=true。"
+              },
+              {
+                "id": "1b632430-ca44-41c1-b1cd-b75bef53fc50",
+                "role": "user",
+                "text": "当前状态：{{#1900000000010.state_json#}}\n广告文案：{{#1900000000001.ad_script#}}\n产品信息：{{#1900000000001.product_context#}}"
+              }
+            ],
+            "structured_output": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "analyze_frames",
+                      "extract_additional_frames",
+                      "check_ad_script",
+                      "generate_optimization_plan",
+                      "stop"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "should_stop": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "action",
+                  "reason",
+                  "arguments",
+                  "should_stop"
+                ]
+              }
+            },
+            "structured_output_enabled": true,
+            "vision": {
+              "enabled": false
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000011",
+          "position": {
+            "x": 120,
+            "y": 70
+          },
+          "positionAbsolute": {
+            "x": 1020,
+            "y": 310
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "校验决策与守卫",
+            "type": "code",
+            "selected": false,
+            "code": "import json\nALLOWED={\"analyze_frames\",\"extract_additional_frames\",\"check_ad_script\",\"generate_optimization_plan\",\"stop\"}\ndef main(state_json, decision):\n    state=json.loads(state_json); action=str((decision or {}).get(\"action\", \"stop\"))\n    completed=state.get(\"completed_actions\", [])\n    invalid=(action not in ALLOWED or state.get(\"final_status\") != \"running\" or (action==\"extract_additional_frames\" and state.get(\"supplementary_rounds\",0)>=1) or (action==\"analyze_frames\" and completed.count(\"analyze_frames\")>=2) or (action==\"check_ad_script\" and \"check_ad_script\" in completed) or (action==\"generate_optimization_plan\" and \"generate_optimization_plan\" in completed))\n    if invalid: action=\"stop\"; state[\"needs_human_review\"]=True; state[\"errors\"].append(\"决策被确定性守卫拒绝\")\n    state[\"current_step\"]=int(state.get(\"current_step\",0))+1\n    return {\"action\": action, \"state_json\": json.dumps(state,ensure_ascii=False), \"timestamps_json\": json.dumps((decision or {}).get(\"arguments\",{}).get(\"timestamps\",[]),ensure_ascii=False)}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "1900000000010",
+                  "state_json"
+                ],
+                "value_type": "string",
+                "variable": "state_json"
+              },
+              {
+                "value_selector": [
+                  "1900000000011",
+                  "structured_output"
+                ],
+                "value_type": "object",
+                "variable": "decision"
+              }
+            ],
+            "outputs": {
+              "action": {
+                "children": null,
+                "type": "string"
+              },
+              "state_json": {
+                "children": null,
+                "type": "string"
+              },
+              "timestamps_json": {
+                "children": null,
+                "type": "string"
+              }
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000012",
+          "position": {
+            "x": 430,
+            "y": 70
+          },
+          "positionAbsolute": {
+            "x": 1330,
+            "y": 310
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "动作？analyze_frames",
+            "type": "if-else",
+            "selected": false,
+            "cases": [
+              {
+                "case_id": "true",
+                "id": "true",
+                "logical_operator": "and",
+                "conditions": [
+                  {
+                    "comparison_operator": "is",
+                    "id": "476d1c2f-5b08-4672-a14e-fa7e9b4eb9f6",
+                    "value": "analyze_frames",
+                    "varType": "string",
+                    "variable_selector": [
+                      "1900000000012",
+                      "action"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000013",
+          "position": {
+            "x": 730,
+            "y": 70
+          },
+          "positionAbsolute": {
+            "x": 1630,
+            "y": 310
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "动作？check_ad_script",
+            "type": "if-else",
+            "selected": false,
+            "cases": [
+              {
+                "case_id": "true",
+                "id": "true",
+                "logical_operator": "and",
+                "conditions": [
+                  {
+                    "comparison_operator": "is",
+                    "id": "1fd5982f-ebda-44ef-afbf-9b5ed7c5e595",
+                    "value": "check_ad_script",
+                    "varType": "string",
+                    "variable_selector": [
+                      "1900000000012",
+                      "action"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000014",
+          "position": {
+            "x": 1030,
+            "y": 205
+          },
+          "positionAbsolute": {
+            "x": 1930,
+            "y": 445
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "动作？extract_additional_frames",
+            "type": "if-else",
+            "selected": false,
+            "cases": [
+              {
+                "case_id": "true",
+                "id": "true",
+                "logical_operator": "and",
+                "conditions": [
+                  {
+                    "comparison_operator": "is",
+                    "id": "600a6b42-9cc1-4064-8ef2-81344acf0089",
+                    "value": "extract_additional_frames",
+                    "varType": "string",
+                    "variable_selector": [
+                      "1900000000012",
+                      "action"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000015",
+          "position": {
+            "x": 1330,
+            "y": 340
+          },
+          "positionAbsolute": {
+            "x": 2230,
+            "y": 580
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "动作？generate_optimization_plan",
+            "type": "if-else",
+            "selected": false,
+            "cases": [
+              {
+                "case_id": "true",
+                "id": "true",
+                "logical_operator": "and",
+                "conditions": [
+                  {
+                    "comparison_operator": "is",
+                    "id": "e2db7bca-20fe-4227-8d42-32f5d70c12ef",
+                    "value": "generate_optimization_plan",
+                    "varType": "string",
+                    "variable_selector": [
+                      "1900000000012",
+                      "action"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000016",
+          "position": {
+            "x": 1630,
+            "y": 475
+          },
+          "positionAbsolute": {
+            "x": 2530,
+            "y": 715
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "分析关键帧",
+            "type": "llm",
+            "selected": false,
+            "context": {
+              "enabled": false,
+              "variable_selector": []
+            },
+            "model": {
+              "provider": "langgenius/deepseek/deepseek",
+              "name": "deepseek-flash",
+              "mode": "chat",
+              "completion_params": {
+                "temperature": 0.1
+              }
+            },
+            "prompt_template": [
+              {
+                "id": "2d14917b-9557-4855-916b-bbd5c6077ff1",
+                "role": "system",
+                "text": "只根据输入关键帧提取广告视觉证据；不猜测音频、转场或未出现内容。"
+              },
+              {
+                "id": "9a19a947-2ec0-460d-b9d5-b87633d22964",
+                "role": "user",
+                "text": "素材类型：{{#1900000000001.material_type#}}\n当前状态：{{#1900000000012.state_json#}}"
+              }
+            ],
+            "structured_output": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "summary": {
+                    "type": "string"
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "missing_dimensions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "summary",
+                  "evidence",
+                  "missing_dimensions",
+                  "confidence"
+                ]
+              }
+            },
+            "structured_output_enabled": true,
+            "vision": {
+              "enabled": true,
+              "configs": {
+                "detail": "high",
+                "variable_selector": [
+                  "1900000000007",
+                  "output"
+                ]
+              }
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000020",
+          "position": {
+            "x": 1050,
+            "y": 20
+          },
+          "positionAbsolute": {
+            "x": 1950,
+            "y": 260
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "检查广告文案",
+            "type": "llm",
+            "selected": false,
+            "context": {
+              "enabled": false,
+              "variable_selector": []
+            },
+            "model": {
+              "provider": "langgenius/deepseek/deepseek",
+              "name": "deepseek-flash",
+              "mode": "chat",
+              "completion_params": {
+                "temperature": 0.1
+              }
+            },
+            "prompt_template": [
+              {
+                "id": "a5eb84e4-52ed-4074-94c4-f7b22d64e724",
+                "role": "system",
+                "text": "检查广告文案是否清晰、可信、与产品信息一致；不得编造事实。"
+              },
+              {
+                "id": "8389d015-016c-4c5f-b298-a443c3a93db8",
+                "role": "user",
+                "text": "广告文案：{{#1900000000001.ad_script#}}\n产品信息：{{#1900000000001.product_context#}}"
+              }
+            ],
+            "structured_output": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "summary": {
+                    "type": "string"
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "missing_dimensions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "summary",
+                  "evidence",
+                  "missing_dimensions",
+                  "confidence"
+                ]
+              }
+            },
+            "structured_output_enabled": true,
+            "vision": {
+              "enabled": false
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000021",
+          "position": {
+            "x": 1350,
+            "y": 160
+          },
+          "positionAbsolute": {
+            "x": 2250,
+            "y": 400
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "提取补充关键帧",
+            "type": "http-request",
+            "selected": false,
+            "authorization": {
+              "config": null,
+              "type": "no-auth"
+            },
+            "body": {
+              "type": "json",
+              "data": [
+                {
+                  "id": "supplement-json",
+                  "key": "",
+                  "type": "text",
+                  "value": "{\"timestamps\": {{#1900000000012.timestamps_json#}}}"
+                }
+              ]
+            },
+            "headers": "Content-Type: application/json",
+            "method": "post",
+            "params": "",
+            "retry_config": {
+              "max_retries": 1,
+              "retry_enabled": true,
+              "retry_interval": 1000
+            },
+            "ssl_verify": true,
+            "timeout": {
+              "connect": 10,
+              "read": 120,
+              "write": 120,
+              "max_connect_timeout": 0,
+              "max_read_timeout": 0,
+              "max_write_timeout": 0
+            },
+            "url": "http://host.docker.internal:8000/api/v1/agent-videos/{{#1900000000003.video_id#}}/frames",
+            "variables": [],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000022",
+          "position": {
+            "x": 1650,
+            "y": 300
+          },
+          "positionAbsolute": {
+            "x": 2550,
+            "y": 540
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "生成优化方案",
+            "type": "llm",
+            "selected": false,
+            "context": {
+              "enabled": false,
+              "variable_selector": []
+            },
+            "model": {
+              "provider": "langgenius/deepseek/deepseek",
+              "name": "deepseek-flash",
+              "mode": "chat",
+              "completion_params": {
+                "temperature": 0.1
+              }
+            },
+            "prompt_template": [
+              {
+                "id": "7ad6f213-ed45-454e-bc3b-1d75de26ef65",
+                "role": "system",
+                "text": "根据已有状态生成可执行的广告素材优化方案；证据不足时明确标注，不得杜撰。"
+              },
+              {
+                "id": "e3428a15-e7fe-45e1-8c38-14fe23c9b45b",
+                "role": "user",
+                "text": "当前状态：{{#1900000000012.state_json#}}\n产品信息：{{#1900000000001.product_context#}}"
+              }
+            ],
+            "structured_output": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "priority": {
+                    "type": "string"
+                  },
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "priority",
+                  "changes",
+                  "rationale"
+                ]
+              }
+            },
+            "structured_output_enabled": true,
+            "vision": {
+              "enabled": false
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000023",
+          "position": {
+            "x": 1950,
+            "y": 430
+          },
+          "positionAbsolute": {
+            "x": 2850,
+            "y": 670
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "合并 analyze_frames 结果",
+            "type": "code",
+            "selected": false,
+            "code": "import json\ndef main(state_json, action, result):\n    state=json.loads(state_json); completed=state.setdefault(\"completed_actions\", [])\n    if action not in completed or action==\"analyze_frames\": completed.append(action)\n    if action==\"analyze_frames\": state[\"visual_evidence\"].append(result)\n    elif action==\"check_ad_script\": state[\"script_evidence\"].append(result)\n    elif action==\"extract_additional_frames\": state[\"supplementary_rounds\"]=1\n    elif action==\"generate_optimization_plan\": state[\"optimization_plan\"]=result\n    if action==\"stop\" or (\"analyze_frames\" in completed and \"generate_optimization_plan\" in completed):\n        state[\"final_status\"]=\"human_review_required\" if state.get(\"needs_human_review\") else (\"partial\" if state.get(\"errors\") else \"completed\")\n    return {\"state_json\":json.dumps(state,ensure_ascii=False),\"final_status\":state.get(\"final_status\",\"running\")}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "1900000000012",
+                  "state_json"
+                ],
+                "value_type": "string",
+                "variable": "state_json"
+              },
+              {
+                "variable": "action",
+                "value_selector": [
+                  "1900000000012",
+                  "action"
+                ],
+                "value_type": "string"
+              },
+              {
+                "value_selector": [
+                  "1900000000020",
+                  "structured_output"
+                ],
+                "value_type": "object",
+                "variable": "result"
+              }
+            ],
+            "outputs": {
+              "state_json": {
+                "children": null,
+                "type": "string"
+              },
+              "final_status": {
+                "children": null,
+                "type": "string"
+              }
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000030",
+          "position": {
+            "x": 2300,
+            "y": 20
+          },
+          "positionAbsolute": {
+            "x": 3200,
+            "y": 260
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "写回 analyze_frames 状态",
+            "type": "assigner",
+            "selected": false,
+            "version": "2",
+            "items": [
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000030",
+                  "state_json"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "state_json"
+                ],
+                "write_mode": "over-write"
+              },
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000030",
+                  "final_status"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "final_status"
+                ],
+                "write_mode": "over-write"
+              }
+            ],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000040",
+          "position": {
+            "x": 2600,
+            "y": 20
+          },
+          "positionAbsolute": {
+            "x": 3500,
+            "y": 260
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "合并 check_ad_script 结果",
+            "type": "code",
+            "selected": false,
+            "code": "import json\ndef main(state_json, action, result):\n    state=json.loads(state_json); completed=state.setdefault(\"completed_actions\", [])\n    if action not in completed or action==\"analyze_frames\": completed.append(action)\n    if action==\"analyze_frames\": state[\"visual_evidence\"].append(result)\n    elif action==\"check_ad_script\": state[\"script_evidence\"].append(result)\n    elif action==\"extract_additional_frames\": state[\"supplementary_rounds\"]=1\n    elif action==\"generate_optimization_plan\": state[\"optimization_plan\"]=result\n    if action==\"stop\" or (\"analyze_frames\" in completed and \"generate_optimization_plan\" in completed):\n        state[\"final_status\"]=\"human_review_required\" if state.get(\"needs_human_review\") else (\"partial\" if state.get(\"errors\") else \"completed\")\n    return {\"state_json\":json.dumps(state,ensure_ascii=False),\"final_status\":state.get(\"final_status\",\"running\")}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "1900000000012",
+                  "state_json"
+                ],
+                "value_type": "string",
+                "variable": "state_json"
+              },
+              {
+                "variable": "action",
+                "value_selector": [
+                  "1900000000012",
+                  "action"
+                ],
+                "value_type": "string"
+              },
+              {
+                "value_selector": [
+                  "1900000000021",
+                  "structured_output"
+                ],
+                "value_type": "object",
+                "variable": "result"
+              }
+            ],
+            "outputs": {
+              "state_json": {
+                "children": null,
+                "type": "string"
+              },
+              "final_status": {
+                "children": null,
+                "type": "string"
+              }
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000031",
+          "position": {
+            "x": 2300,
+            "y": 180
+          },
+          "positionAbsolute": {
+            "x": 3200,
+            "y": 420
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "写回 check_ad_script 状态",
+            "type": "assigner",
+            "selected": false,
+            "version": "2",
+            "items": [
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000031",
+                  "state_json"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "state_json"
+                ],
+                "write_mode": "over-write"
+              },
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000031",
+                  "final_status"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "final_status"
+                ],
+                "write_mode": "over-write"
+              }
+            ],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000041",
+          "position": {
+            "x": 2600,
+            "y": 180
+          },
+          "positionAbsolute": {
+            "x": 3500,
+            "y": 420
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "合并 extract_additional_frames 结果",
+            "type": "code",
+            "selected": false,
+            "code": "import json\ndef main(state_json, action, result):\n    state=json.loads(state_json); completed=state.setdefault(\"completed_actions\", [])\n    if action not in completed or action==\"analyze_frames\": completed.append(action)\n    if action==\"analyze_frames\": state[\"visual_evidence\"].append(result)\n    elif action==\"check_ad_script\": state[\"script_evidence\"].append(result)\n    elif action==\"extract_additional_frames\": state[\"supplementary_rounds\"]=1\n    elif action==\"generate_optimization_plan\": state[\"optimization_plan\"]=result\n    if action==\"stop\" or (\"analyze_frames\" in completed and \"generate_optimization_plan\" in completed):\n        state[\"final_status\"]=\"human_review_required\" if state.get(\"needs_human_review\") else (\"partial\" if state.get(\"errors\") else \"completed\")\n    return {\"state_json\":json.dumps(state,ensure_ascii=False),\"final_status\":state.get(\"final_status\",\"running\")}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "1900000000012",
+                  "state_json"
+                ],
+                "value_type": "string",
+                "variable": "state_json"
+              },
+              {
+                "variable": "action",
+                "value_selector": [
+                  "1900000000012",
+                  "action"
+                ],
+                "value_type": "string"
+              },
+              {
+                "value_selector": [
+                  "1900000000022",
+                  "body"
+                ],
+                "value_type": "string",
+                "variable": "result"
+              }
+            ],
+            "outputs": {
+              "state_json": {
+                "children": null,
+                "type": "string"
+              },
+              "final_status": {
+                "children": null,
+                "type": "string"
+              }
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000032",
+          "position": {
+            "x": 2300,
+            "y": 340
+          },
+          "positionAbsolute": {
+            "x": 3200,
+            "y": 580
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "写回 extract_additional_frames 状态",
+            "type": "assigner",
+            "selected": false,
+            "version": "2",
+            "items": [
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000032",
+                  "state_json"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "state_json"
+                ],
+                "write_mode": "over-write"
+              },
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000032",
+                  "final_status"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "final_status"
+                ],
+                "write_mode": "over-write"
+              }
+            ],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000042",
+          "position": {
+            "x": 2600,
+            "y": 340
+          },
+          "positionAbsolute": {
+            "x": 3500,
+            "y": 580
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "合并 generate_optimization_plan 结果",
+            "type": "code",
+            "selected": false,
+            "code": "import json\ndef main(state_json, action, result):\n    state=json.loads(state_json); completed=state.setdefault(\"completed_actions\", [])\n    if action not in completed or action==\"analyze_frames\": completed.append(action)\n    if action==\"analyze_frames\": state[\"visual_evidence\"].append(result)\n    elif action==\"check_ad_script\": state[\"script_evidence\"].append(result)\n    elif action==\"extract_additional_frames\": state[\"supplementary_rounds\"]=1\n    elif action==\"generate_optimization_plan\": state[\"optimization_plan\"]=result\n    if action==\"stop\" or (\"analyze_frames\" in completed and \"generate_optimization_plan\" in completed):\n        state[\"final_status\"]=\"human_review_required\" if state.get(\"needs_human_review\") else (\"partial\" if state.get(\"errors\") else \"completed\")\n    return {\"state_json\":json.dumps(state,ensure_ascii=False),\"final_status\":state.get(\"final_status\",\"running\")}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "1900000000012",
+                  "state_json"
+                ],
+                "value_type": "string",
+                "variable": "state_json"
+              },
+              {
+                "variable": "action",
+                "value_selector": [
+                  "1900000000012",
+                  "action"
+                ],
+                "value_type": "string"
+              },
+              {
+                "value_selector": [
+                  "1900000000023",
+                  "structured_output"
+                ],
+                "value_type": "object",
+                "variable": "result"
+              }
+            ],
+            "outputs": {
+              "state_json": {
+                "children": null,
+                "type": "string"
+              },
+              "final_status": {
+                "children": null,
+                "type": "string"
+              }
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000033",
+          "position": {
+            "x": 2300,
+            "y": 500
+          },
+          "positionAbsolute": {
+            "x": 3200,
+            "y": 740
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "写回 generate_optimization_plan 状态",
+            "type": "assigner",
+            "selected": false,
+            "version": "2",
+            "items": [
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000033",
+                  "state_json"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "state_json"
+                ],
+                "write_mode": "over-write"
+              },
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000033",
+                  "final_status"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "final_status"
+                ],
+                "write_mode": "over-write"
+              }
+            ],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000043",
+          "position": {
+            "x": 2600,
+            "y": 500
+          },
+          "positionAbsolute": {
+            "x": 3500,
+            "y": 740
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "停止并确定状态",
+            "type": "code",
+            "selected": false,
+            "code": "import json\ndef main(state_json, action, result):\n    state=json.loads(state_json); completed=state.setdefault(\"completed_actions\", [])\n    if action not in completed or action==\"analyze_frames\": completed.append(action)\n    if action==\"analyze_frames\": state[\"visual_evidence\"].append(result)\n    elif action==\"check_ad_script\": state[\"script_evidence\"].append(result)\n    elif action==\"extract_additional_frames\": state[\"supplementary_rounds\"]=1\n    elif action==\"generate_optimization_plan\": state[\"optimization_plan\"]=result\n    if action==\"stop\" or (\"analyze_frames\" in completed and \"generate_optimization_plan\" in completed):\n        state[\"final_status\"]=\"human_review_required\" if state.get(\"needs_human_review\") else (\"partial\" if state.get(\"errors\") else \"completed\")\n    return {\"state_json\":json.dumps(state,ensure_ascii=False),\"final_status\":state.get(\"final_status\",\"running\")}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "1900000000012",
+                  "state_json"
+                ],
+                "value_type": "string",
+                "variable": "state_json"
+              },
+              {
+                "variable": "action",
+                "value_selector": [
+                  "1900000000012",
+                  "action"
+                ],
+                "value_type": "string"
+              },
+              {
+                "variable": "result",
+                "value_selector": [
+                  "1900000000011",
+                  "structured_output"
+                ],
+                "value_type": "object"
+              }
+            ],
+            "outputs": {
+              "state_json": {
+                "children": null,
+                "type": "string"
+              },
+              "final_status": {
+                "children": null,
+                "type": "string"
+              }
+            },
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000024",
+          "position": {
+            "x": 2250,
+            "y": 700
+          },
+          "positionAbsolute": {
+            "x": 3150,
+            "y": 940
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "写回停止状态",
+            "type": "assigner",
+            "selected": false,
+            "version": "2",
+            "items": [
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000024",
+                  "state_json"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "state_json"
+                ],
+                "write_mode": "over-write"
+              },
+              {
+                "input_type": "variable",
+                "operation": "over-write",
+                "value": [
+                  "1900000000024",
+                  "final_status"
+                ],
+                "variable_selector": [
+                  "1900000000010",
+                  "final_status"
+                ],
+                "write_mode": "over-write"
+              }
+            ],
+            "isInLoop": true,
+            "loop_id": "1900000000010",
+            "isInIteration": false
+          },
+          "height": 90,
+          "id": "1900000000044",
+          "position": {
+            "x": 2600,
+            "y": 700
+          },
+          "positionAbsolute": {
+            "x": 3500,
+            "y": 940
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 1002,
+          "parentId": "1900000000010"
+        },
+        {
+          "data": {
+            "title": "清理 Agent 视频任务",
+            "type": "http-request",
+            "selected": false,
+            "authorization": {
+              "config": null,
+              "type": "no-auth"
+            },
+            "body": {
+              "data": [],
+              "type": "none"
+            },
+            "headers": "",
+            "method": "delete",
+            "params": "",
+            "retry_config": {
+              "max_retries": 1,
+              "retry_enabled": true,
+              "retry_interval": 1000
+            },
+            "ssl_verify": true,
+            "timeout": {
+              "connect": 10,
+              "read": 120,
+              "write": 120,
+              "max_connect_timeout": 0,
+              "max_read_timeout": 0,
+              "max_write_timeout": 0
+            },
+            "url": "http://host.docker.internal:8000/api/v1/agent-videos/{{#1900000000003.video_id#}}",
+            "variables": [],
+            "error_strategy": "fail-branch"
+          },
+          "height": 90,
+          "id": "1900000000050",
+          "position": {
+            "x": 5220,
+            "y": 360
+          },
+          "positionAbsolute": {
+            "x": 5220,
+            "y": 360
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "生成最终报告",
+            "type": "template-transform",
+            "selected": false,
+            "template": "# AI 广告素材 Agent 报告\n\n状态：{{ final_status }}\n\n> 技术链路已验证，真实广告质量待人工复核。\n\n## Agent 状态与证据\n\n```json\n{{ state_json }}\n```",
+            "variables": [
+              {
+                "value_selector": [
+                  "1900000000010",
+                  "final_status"
+                ],
+                "value_type": "string",
+                "variable": "final_status"
+              },
+              {
+                "value_selector": [
+                  "1900000000010",
+                  "state_json"
+                ],
+                "value_type": "string",
+                "variable": "state_json"
+              }
+            ]
+          },
+          "height": 90,
+          "id": "1900000000051",
+          "position": {
+            "x": 5520,
+            "y": 360
+          },
+          "positionAbsolute": {
+            "x": 5520,
+            "y": 360
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "输出报告",
+            "type": "end",
+            "selected": false,
+            "outputs": [
+              {
+                "value_selector": [
+                  "1900000000051",
+                  "output"
+                ],
+                "value_type": "string",
+                "variable": "report"
+              },
+              {
+                "value_selector": [
+                  "1900000000010",
+                  "final_status"
+                ],
+                "value_type": "string",
+                "variable": "final_status"
+              }
+            ]
+          },
+          "height": 90,
+          "id": "1900000000052",
+          "position": {
+            "x": 5820,
+            "y": 360
+          },
+          "positionAbsolute": {
+            "x": 5820,
+            "y": 360
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        }
+      ],
+      "viewport": {
+        "x": -120,
+        "y": 20,
+        "zoom": 0.55
+      }
+    },
+    "rag_pipeline_variables": []
+  }
+}

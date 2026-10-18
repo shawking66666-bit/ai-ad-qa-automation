@@ -32,10 +32,22 @@ class WindowsLauncherTests(unittest.TestCase):
     def test_start_script_creates_data_directory_and_checks_dependencies(self):
         content = read_project_file("start_video_processor.ps1")
 
-        self.assertIn("D:\\AI-Ad-QA-Data\\video_processor_data", content)
+        self.assertIn("E:\\AI\\Data\\AI-Ad-QA\\video_processor_data", content)
         self.assertIn("New-Item", content)
         self.assertIn("requirements.txt", content)
         self.assertIn("video_processor.app:app", content)
+        self.assertIn(".venv\\Scripts\\python.exe", content)
+        self.assertIn("VIDEO_PROCESSOR_FFMPEG_PATH", content)
+        self.assertIn("VIDEO_PROCESSOR_FFPROBE_PATH", content)
+        self.assertNotIn("python -m pip install", content)
+
+    def test_start_script_does_not_treat_python_stderr_warning_as_failure(self):
+        content = read_project_file("start_video_processor.ps1")
+
+        self.assertIn('$ErrorActionPreference = "Continue"', content)
+        self.assertIn("$dependencyCheckExitCode = $LASTEXITCODE", content)
+        self.assertIn("$runtimeCheckExitCode = $LASTEXITCODE", content)
+        self.assertIn("$serverExitCode = $LASTEXITCODE", content)
 
     def test_gitignore_excludes_secrets_media_and_runtime_outputs(self):
         content = read_project_file(".gitignore")
@@ -48,7 +60,11 @@ class WindowsLauncherTests(unittest.TestCase):
 
         self.assertIn('git config --global --add safe.directory "%CD%"', content)
         self.assertIn("git config --local user.name shawking66666-bit", content)
-        self.assertIn("git config --local user.email shaw.king.66666@gmail.com", content)
+        self.assertIn(
+            "git config --local user.email "
+            "272393408+shawking66666-bit@users.noreply.github.com",
+            content,
+        )
         self.assertIn(
             "https://github.com/shawking66666-bit/ai-ad-qa-automation.git",
             content,

@@ -13,7 +13,7 @@ try {
 }
 catch {
     Write-Host "FastAPI is not available." -ForegroundColor Red
-    Write-Host "Double-click Start-FastAPI.cmd first."
+    Write-Host "Double-click 启动FastAPI.cmd first."
     Write-Host "Details: $($_.Exception.Message)"
     exit 1
 }

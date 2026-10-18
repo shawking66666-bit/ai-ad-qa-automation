@@ -2,6 +2,9 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
+
+from tests.video_fixtures import create_test_video
 
 
 class TimestampSelectionTests(unittest.TestCase):
@@ -33,34 +36,14 @@ class FfmpegIntegrationTests(unittest.TestCase):
         from video_processor.service import (
             extract_frames,
             probe_duration,
+            resolve_executable,
             select_timestamps,
         )
 
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
-            video_path = root / "sample.mp4"
+            video_path = create_test_video(root / "sample.mp4")
             frames_dir = root / "frames"
-            subprocess.run(
-                [
-                    "ffmpeg",
-                    "-hide_banner",
-                    "-loglevel",
-                    "error",
-                    "-f",
-                    "lavfi",
-                    "-i",
-                    "testsrc2=size=320x240:rate=10",
-                    "-t",
-                    "4",
-                    "-c:v",
-                    "libx264",
-                    "-pix_fmt",
-                    "yuv420p",
-                    "-y",
-                    str(video_path),
-                ],
-                check=True,
-            )
 
             duration = probe_duration(video_path)
             frames = extract_frames(
@@ -78,6 +61,18 @@ class FfmpegIntegrationTests(unittest.TestCase):
             for frame in frames:
                 self.assertTrue(frame.path.is_file())
                 self.assertGreater(frame.path.stat().st_size, 1000)
+
+
+class SubprocessSafetyTests(unittest.TestCase):
+    def test_reports_ffmpeg_timeout_as_runtime_error(self):
+        from video_processor.service import _run
+
+        with patch(
+            "video_processor.service.subprocess.run",
+            side_effect=subprocess.TimeoutExpired(["ffmpeg"], 1),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "timed out"):
+                _run(["ffmpeg", "-version"], timeout_seconds=1)
 
 
 if __name__ == "__main__":

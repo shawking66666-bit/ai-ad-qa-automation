@@ -15,7 +15,7 @@ if errorlevel 1 goto :failed
 
 git config --local user.name shawking66666-bit
 if errorlevel 1 goto :failed
-git config --local user.email shaw.king.66666@gmail.com
+git config --local user.email 272393408+shawking66666-bit@users.noreply.github.com
 if errorlevel 1 goto :failed
 
 git add .

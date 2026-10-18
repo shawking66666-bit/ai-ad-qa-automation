@@ -11,8 +11,12 @@ On Windows, the easiest option is to double-click:
 - `检查FastAPI状态.cmd` — verify `http://localhost:8000/health`.
 - `停止FastAPI.cmd` — stop only this project's Uvicorn process.
 
-The first start creates `D:\AI-Ad-QA-Data\video_processor_data` and installs
-missing Python packages from `requirements.txt`.
+The first start creates the project-local `.venv`, installs missing packages
+there, checks the portable FFmpeg executables, and creates
+`E:\AI\Data\AI-Ad-QA\video_processor_data`.
+
+Portable FFmpeg is expected at `E:\AI\Tools\ffmpeg`. The launcher references
+the executables directly and does not modify the Windows system `PATH`.
 
 The equivalent PowerShell command is:
 
@@ -37,7 +41,17 @@ curl.exe -X POST `
 ```
 
 Generated data is stored under
-`D:\AI-Ad-QA-Data\video_processor_data\<video_id>`.
+`E:\AI\Data\AI-Ad-QA\video_processor_data\<video_id>`.
+
+Runtime safeguards:
+
+- Maximum upload size: 500 MiB.
+- FFmpeg and FFprobe calls have explicit timeouts.
+- Successfully processed source videos are removed; extracted JPEG frames are
+  retained for Dify access.
+- UUID task directories older than 7 days are removed on startup. Unrelated
+  directories are not touched.
+- `/health` returns success only when FFmpeg and FFprobe are usable.
 
 ## Personal PC and GitHub
 
@@ -46,7 +60,8 @@ uploaded videos, extracted frames, runtime outputs, or virtual environments.
 
 After cloning on another Windows PC:
 
-1. Install Python 3.11 or newer and FFmpeg.
+1. Install Python 3.11 or newer and place portable FFmpeg under
+   `E:\AI\Tools\ffmpeg`.
 2. Start Docker Desktop and wait for Dify.
 3. Double-click `启动FastAPI.cmd`.
 4. Import the current workflow DSL into Dify and configure model credentials.
@@ -62,12 +77,12 @@ Create a **Private** GitHub repository named `ai-ad-qa-automation` under
 repository-local Git identity settings:
 
 - User: `shawking66666-bit`
-- Email: `shaw.king.66666@gmail.com`
+- Email: `272393408+shawking66666-bit@users.noreply.github.com`
 
 It does not change the company's global Git configuration.
 
 ## Test
 
 ```powershell
-python -m unittest discover -s tests -v
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```

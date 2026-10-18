@@ -14,7 +14,7 @@ git config --global --add safe.directory "%CD%"
 if errorlevel 1 goto :failed
 
 git config --local user.name shawking66666-bit
-git config --local user.email shaw.king.66666@gmail.com
+git config --local user.email 272393408+shawking66666-bit@users.noreply.github.com
 git add .
 
 git diff --cached --quiet
