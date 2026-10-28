@@ -22,6 +22,8 @@ from .agent_tasks import (
     record_supplement,
     save_record,
 )
+from .evaluation import EvaluationRequest, normalize_evaluation
+from .reporting import render_markdown
 from .service import (
     check_runtime_dependencies,
     extract_frames,
@@ -241,6 +243,15 @@ def create_app(
         except RuntimeError as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
         return {"status": "ok"}
+
+    @application.post("/api/v1/evaluations/render")
+    def render_evaluation(request: EvaluationRequest) -> dict:
+        result = normalize_evaluation(request)
+        return {
+            "result": result.model_dump(mode="json"),
+            "report_markdown": render_markdown(result),
+            "technical_details": request.technical_details,
+        }
 
     @application.post("/api/v1/videos/extract")
     async def extract_video(video: UploadFile = File(...)) -> dict:

@@ -59,6 +59,64 @@ class VideoProcessorApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"status": "ok"})
 
+    def test_render_endpoint_separates_report_and_technical_details(self):
+        response = self.client.post(
+            "/api/v1/evaluations/render",
+            json={
+                "asset_type": "script",
+                "profile": "ad_script_v1",
+                "summary": "结构完整。",
+                "dimensions": [
+                    {
+                        "dimension": "structure",
+                        "label": "信息结构",
+                        "score": 8,
+                        "status": "evaluated",
+                        "reason": "钩子、卖点和CTA完整",
+                    }
+                ],
+                "confidence": 0.9,
+                "technical_details": {
+                    "state_json": "secret-debug-state",
+                    "steps": 1,
+                },
+            },
+        )
+
+        self.assertEqual(response.status_code, 200, response.text)
+        payload = response.json()
+        self.assertEqual(payload["result"]["status"], "completed")
+        self.assertIn("总体结论", payload["report_markdown"])
+        self.assertNotIn("secret-debug-state", payload["report_markdown"])
+        self.assertEqual(
+            payload["technical_details"]["state_json"],
+            "secret-debug-state",
+        )
+
+    def test_render_endpoint_rejects_unknown_evidence_reference_with_422(self):
+        response = self.client.post(
+            "/api/v1/evaluations/render",
+            json={
+                "asset_type": "image",
+                "profile": "ad_image_v1",
+                "summary": "主体不突出。",
+                "dimensions": [],
+                "issues": [
+                    {
+                        "priority": "P1",
+                        "dimension": "subject",
+                        "problem": "主体较小",
+                        "impact": "用户难以识别商品",
+                        "evidence_refs": ["missing-evidence"],
+                        "suggestion": "放大商品",
+                    }
+                ],
+                "confidence": 0.8,
+            },
+        )
+
+        self.assertEqual(response.status_code, 422)
+
     def test_rejects_unsupported_file_extension(self):
         response = self.client.post(
             "/api/v1/videos/extract",
