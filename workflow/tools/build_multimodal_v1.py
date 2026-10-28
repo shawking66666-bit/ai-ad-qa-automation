@@ -174,6 +174,66 @@ def main(body, status_code, fallback_details):
     edges[:] = [item for item in edges if item["target"] != "2900000000004"]
     nodes.extend([image_llm,image_normalizer,image_renderer,image_parser,image_end])
     edges.extend([base.edge("2900000000002","2900000000200","if-else","llm","true"),base.edge("2900000000200","2900000000201","llm","code"),base.edge("2900000000201","2900000000202","code","http-request"),base.edge("2900000000202","2900000000203","http-request","code"),base.edge("2900000000202","2900000000203","http-request","code","fail-branch"),base.edge("2900000000203","2900000000204","code","end")])
+
+    script_dimensions = ["hook", "pain_point", "selling_point", "audience", "structure", "cta", "claim_risk"]
+    script_schema = {
+        "type":"object","additionalProperties":False,"properties":{
+            "summary":{"type":"string"},
+            "dimensions":{"type":"array","items":{"type":"object","additionalProperties":False,"properties":{"dimension":{"type":"string","enum":script_dimensions},"score":{"type":"number","minimum":0,"maximum":10},"reason":{"type":"string"}},"required":["dimension","score","reason"]}},
+            "evidence":{"type":"array","items":{"type":"object","additionalProperties":False,"properties":{"location":{"type":"string","description":"段落编号或场景编号"},"content":{"type":"string"}},"required":["location","content"]}},
+            "issues":{"type":"array","items":{"type":"string"}},"strengths":{"type":"array","items":{"type":"string"}},"suggestions":{"type":"array","items":{"type":"string"}},"confidence":{"type":"number","minimum":0,"maximum":1},
+        },"required":["summary","dimensions","evidence","issues","strengths","suggestions","confidence"],
+    }
+    script_validator = base.node("2900000000300","脚本非空？","if-else",1230,1160,base.if_data(["1900000000001","script"],"","string","not empty"))
+    empty_script = base.node("2900000000301","拒绝空脚本","end",1530,1280,{"outputs":[
+        {"value_selector":["1900000000001","script"],"value_type":"string","variable":"invalid_script"},
+    ]})
+    script_llm = base.node("2900000000302","评估广告脚本","llm",1530,1100,base.llm_data(
+        "你是广告脚本质量审核员。只根据原文和提供的业务上下文判断，不得补写原文没有的事实。逐项评估 hook、pain_point、selling_point、audience、structure、cta、claim_risk。每条证据必须使用段落编号或场景编号作为 location，便于人工回看。",
+        "profile: ad_script_v1\n脚本原文：{{#1900000000001.script#}}\n产品信息：{{#1900000000001.product_context#}}\n目标受众：{{#1900000000001.target_audience#}}\n转化目标：{{#1900000000001.conversion_goal#}}\n补充要求：{{#1900000000001.additional_requirements#}}",
+        script_schema,
+    ),height=120)
+    script_normalize_code='''import json
+LABELS={"hook":"开场钩子","pain_point":"痛点表达","selling_point":"卖点表达","audience":"受众匹配","structure":"脚本结构","cta":"行动引导","claim_risk":"宣称风险"}
+def main(analysis, product_context, target_audience, conversion_goal):
+    missing=[]
+    for key,value in (("product_context",product_context),("target_audience",target_audience),("conversion_goal",conversion_goal)):
+        if not str(value or "").strip(): missing.append(key)
+    dims=[]; seen=set()
+    for item in analysis.get("dimensions",[]):
+        key=item.get("dimension")
+        if key in LABELS and key not in seen:
+            seen.add(key); dims.append({"dimension":key,"label":LABELS[key],"score":item.get("score",0),"max_score":10,"status":"evaluated","reason":item.get("reason","")})
+    for key,label in LABELS.items():
+        if key not in seen: dims.append({"dimension":key,"label":label,"score":0,"max_score":10,"status":"partial","reason":"模型未返回该维度，需人工复核"})
+    evidence=[]
+    for i,item in enumerate(analysis.get("evidence",[])):
+        evidence.append({"id":f"script-{i+1}","source":"script","location":str(item.get("location","未定位")),"content":str(item.get("content","")),"confidence":analysis.get("confidence",0)})
+    issues=[{"title":text,"severity":"medium","description":text,"evidence_refs":[]} for text in analysis.get("issues",[])]
+    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"rationale":"基于脚本审核发现","expected_impact":"提升脚本表达与转化清晰度"} for i,text in enumerate(analysis.get("suggestions",[]))]
+    confidence=float(analysis.get("confidence",0)); incomplete=any(x["status"]=="partial" for x in dims)
+    payload={"asset_type":"script","profile":"ad_script_v1","summary":analysis.get("summary","") or "脚本评估需要人工复核。","dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":incomplete or confidence<0.6,"human_review_reason":"评分维度缺失或模型置信度偏低" if incomplete or confidence<0.6 else None,"run_summary":{"steps":1,"completed_actions":["single_script_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"text_call":"single_pass"}}
+    return {"evaluation_json":json.dumps(payload,ensure_ascii=False),"technical_details":{"text_call":"single_pass","raw_analysis":analysis}}
+'''
+    script_normalizer=base.node("2900000000303","规范化脚本评估","code",1830,1100,base.code_data(script_normalize_code,[base.var(["2900000000302","structured_output"],"analysis","object"),base.var(["1900000000001","product_context"],"product_context"),base.var(["1900000000001","target_audience"],"target_audience"),base.var(["1900000000001","conversion_goal"],"conversion_goal")],{"evaluation_json":"string","technical_details":"object"}),height=120)
+    script_body={"type":"json","data":[{"id":"script-evaluation-json","key":"","type":"text","value":"{{#2900000000303.evaluation_json#}}"}]}
+    script_renderer=base.node("2900000000304","渲染脚本报告","http-request",2130,1100,base.http_data("post",f"{BASE_URL}/api/v1/evaluations/render",script_body))
+    script_parse_code='''import json
+def main(body, status_code, fallback_details):
+    try:
+        if int(status_code)!=200: raise ValueError(f"renderer status={status_code}")
+        data=json.loads(body) if isinstance(body,str) else body; result=data.get("result",{})
+        if not data.get("report_markdown") or not result: raise ValueError("empty renderer response")
+        return {"report_markdown":data["report_markdown"],"evaluation_result":result,"final_status":str(result.get("status","human_review_required")),"technical_details":data.get("technical_details",fallback_details)}
+    except Exception as exc:
+        return {"report_markdown":"# AIGC 脚本质量评估报告\n\n报告渲染失败，需要人工复核。","evaluation_result":{},"final_status":"human_review_required","technical_details":{"error":str(exc),"fallback":fallback_details}}
+'''
+    script_parser=base.node("2900000000305","解析脚本报告","code",2430,1100,base.code_data(script_parse_code,[base.var(["2900000000304","body"],"body"),base.var(["2900000000304","status_code"],"status_code","number"),base.var(["2900000000303","technical_details"],"fallback_details","object")],{"report_markdown":"string","evaluation_result":"object","final_status":"string","technical_details":"object"}),height=120)
+    script_end=base.node("2900000000306","输出脚本报告","end",2730,1100,{"outputs":[{"value_selector":["2900000000305","report_markdown"],"value_type":"string","variable":"report_markdown"},{"value_selector":["2900000000305","evaluation_result"],"value_type":"object","variable":"evaluation_result"},{"value_selector":["2900000000305","final_status"],"value_type":"string","variable":"final_status"},{"value_selector":["2900000000305","technical_details"],"value_type":"object","variable":"technical_details"}]},height=192)
+    nodes[:]=[item for item in nodes if item["id"]!="2900000000005"]
+    edges[:]=[item for item in edges if item["target"]!="2900000000005"]
+    nodes.extend([script_validator,empty_script,script_llm,script_normalizer,script_renderer,script_parser,script_end])
+    edges.extend([base.edge("2900000000003","2900000000300","if-else","if-else","true"),base.edge("2900000000300","2900000000302","if-else","llm","true"),base.edge("2900000000300","2900000000301","if-else","end","false"),base.edge("2900000000302","2900000000303","llm","code"),base.edge("2900000000303","2900000000304","code","http-request"),base.edge("2900000000304","2900000000305","http-request","code"),base.edge("2900000000304","2900000000305","http-request","code","fail-branch"),base.edge("2900000000305","2900000000306","code","end")])
     dsl["app"].update({"name": "AIGC Multimodal Quality V1 - CANDIDATE", "description": "Portfolio candidate for advertising video, image and script quality evaluation"})
     return dsl
 

@@ -108,6 +108,26 @@ class MultimodalV1DslTests(unittest.TestCase):
         self.assertIn('"human_review_required"', code)
         self.assertIn("报告渲染失败", code)
 
+    def test_script_branch_has_profile_dimensions_and_located_evidence(self):
+        script_nodes = [node for node in self.node_data("llm") if node["title"] == "评估广告脚本"]
+        self.assertEqual(len(script_nodes), 1)
+        script_text = json.dumps(script_nodes[0], ensure_ascii=False)
+        self.assertIn("ad_script_v1", self.text)
+        for dimension in ("hook", "pain_point", "selling_point", "audience", "structure", "cta", "claim_risk"):
+            self.assertIn(dimension, script_text)
+        self.assertIn("location", script_text)
+        self.assertIn("段落", script_text)
+        self.assertIn("场景", script_text)
+
+    def test_blank_script_is_rejected_before_model(self):
+        validators = [node for node in self.node_data("if-else") if node["title"] == "脚本非空？"]
+        self.assertEqual(len(validators), 1)
+        llm_node = next(node for node in self.nodes if node["data"].get("title") == "评估广告脚本")
+        incoming = [edge for edge in self.graph["edges"] if edge["target"] == llm_node["id"]]
+        self.assertEqual(len(incoming), 1)
+        self.assertEqual(incoming[0]["source"], next(node["id"] for node in self.nodes if node["data"].get("title") == "脚本非空？"))
+        self.assertEqual(incoming[0]["sourceHandle"], "true")
+
 
 if __name__ == "__main__":
     unittest.main()
