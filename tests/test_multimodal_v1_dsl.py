@@ -90,6 +90,24 @@ class MultimodalV1DslTests(unittest.TestCase):
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
             self.assertEqual(digest, expected, path)
 
+    def test_image_branch_uses_real_vision_input_and_expected_profile(self):
+        image_nodes = [node for node in self.node_data("llm") if node["title"] == "评估广告图片"]
+        self.assertEqual(len(image_nodes), 1)
+        vision = image_nodes[0]["vision"]
+        self.assertTrue(vision["enabled"])
+        self.assertEqual(vision["configs"]["variable_selector"], ["1900000000001", "image"])
+        image_text = json.dumps(image_nodes[0], ensure_ascii=False)
+        self.assertIn("ad_image_v1", self.text)
+        for dimension in ("subject", "composition", "readability", "selling_point", "audience", "cta", "risk"):
+            self.assertIn(dimension, image_text)
+
+    def test_image_renderer_failure_requires_human_review(self):
+        parsers = [node for node in self.node_data("code") if node["title"] == "解析图片报告"]
+        self.assertEqual(len(parsers), 1)
+        code = parsers[0]["code"]
+        self.assertIn('"human_review_required"', code)
+        self.assertIn("报告渲染失败", code)
+
 
 if __name__ == "__main__":
     unittest.main()

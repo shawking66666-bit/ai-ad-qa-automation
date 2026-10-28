@@ -106,6 +106,74 @@ def main(body, status_code, fallback_details):
         base.edge("2900000000101", "2900000000102", "http-request", "code"),
         base.edge("2900000000102", "2900000000103", "code", "end"),
     ])
+
+    # Image uses one bounded vision call: evidence and scores are produced together,
+    # then normalized through the same renderer contract as the video branch.
+    image_dimensions = ["subject", "composition", "readability", "selling_point", "audience", "cta", "risk"]
+    image_schema = {
+        "type": "object", "additionalProperties": False,
+        "properties": {
+            "summary": {"type": "string"},
+            "dimensions": {"type": "array", "items": {"type": "object", "additionalProperties": False, "properties": {
+                "dimension": {"type": "string", "enum": image_dimensions}, "score": {"type": "number", "minimum": 0, "maximum": 10}, "reason": {"type": "string"},
+            }, "required": ["dimension", "score", "reason"]}},
+            "evidence": {"type": "array", "items": {"type": "string"}},
+            "issues": {"type": "array", "items": {"type": "string"}},
+            "strengths": {"type": "array", "items": {"type": "string"}},
+            "suggestions": {"type": "array", "items": {"type": "string"}},
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        },
+        "required": ["summary", "dimensions", "evidence", "issues", "strengths", "suggestions", "confidence"],
+    }
+    image_llm = base.node("2900000000200", "评估广告图片", "llm", 1230, 920, base.llm_data(
+        "你是广告图片质量审核员。只根据实际图片和用户提供的上下文判断，不得猜测不可见信息。逐项评估 subject、composition、readability、selling_point、audience、cta、risk；证据必须是人能在图中复核的具体描述。",
+        "profile: ad_image_v1\n产品信息：{{#1900000000001.product_context#}}\n目标受众：{{#1900000000001.target_audience#}}\n转化目标：{{#1900000000001.conversion_goal#}}\n补充要求：{{#1900000000001.additional_requirements#}}",
+        image_schema, ["1900000000001", "image"],
+    ), height=120)
+    image_normalize_code = '''import json
+LABELS={"subject":"主体呈现","composition":"画面构图","readability":"文字可读性","selling_point":"卖点表达","audience":"受众匹配","cta":"行动引导","risk":"内容风险"}
+def main(analysis, product_context, target_audience, conversion_goal):
+    missing=[]
+    for key,value in (("product_context",product_context),("target_audience",target_audience),("conversion_goal",conversion_goal)):
+        if not str(value or "").strip(): missing.append(key)
+    dims=[]
+    seen=set()
+    for item in analysis.get("dimensions",[]):
+        key=item.get("dimension")
+        if key in LABELS and key not in seen:
+            seen.add(key); dims.append({"dimension":key,"label":LABELS[key],"score":item.get("score",0),"max_score":10,"status":"evaluated","reason":item.get("reason","")})
+    for key,label in LABELS.items():
+        if key not in seen: dims.append({"dimension":key,"label":label,"score":0,"max_score":10,"status":"partial","reason":"模型未返回该维度，需人工复核"})
+    evidence=[{"id":f"img-{i+1}","source":"image","location":"整张图片","content":text,"confidence":analysis.get("confidence",0)} for i,text in enumerate(analysis.get("evidence",[]))]
+    issues=[{"title":text,"severity":"medium","description":text,"evidence_refs":[]} for text in analysis.get("issues",[])]
+    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"rationale":"基于图片审核发现","expected_impact":"提升广告信息传达质量"} for i,text in enumerate(analysis.get("suggestions",[]))]
+    confidence=float(analysis.get("confidence",0)); incomplete=any(x["status"]=="partial" for x in dims)
+    payload={"asset_type":"image","profile":"ad_image_v1","summary":analysis.get("summary","") or "图片评估需要人工复核。","dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":incomplete or confidence<0.6,"human_review_reason":"评分维度缺失或模型置信度偏低" if incomplete or confidence<0.6 else None,"run_summary":{"steps":1,"completed_actions":["single_vision_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"vision_call":"single_pass"}}
+    return {"evaluation_json":json.dumps(payload,ensure_ascii=False),"technical_details":{"vision_call":"single_pass","raw_analysis":analysis}}
+'''
+    image_normalizer = base.node("2900000000201", "规范化图片评估", "code", 1530, 920, base.code_data(image_normalize_code, [
+        base.var(["2900000000200", "structured_output"], "analysis", "object"), base.var(["1900000000001", "product_context"], "product_context"), base.var(["1900000000001", "target_audience"], "target_audience"), base.var(["1900000000001", "conversion_goal"], "conversion_goal")
+    ], {"evaluation_json":"string","technical_details":"object"}), height=120)
+    image_body = {"type":"json","data":[{"id":"image-evaluation-json","key":"","type":"text","value":"{{#2900000000201.evaluation_json#}}"}]}
+    image_renderer = base.node("2900000000202", "渲染图片报告", "http-request", 1830, 920, base.http_data("post", f"{BASE_URL}/api/v1/evaluations/render", image_body))
+    image_parse_code = '''import json
+def main(body, status_code, fallback_details):
+    try:
+        if int(status_code)!=200: raise ValueError(f"renderer status={status_code}")
+        data=json.loads(body) if isinstance(body,str) else body; result=data.get("result",{})
+        if not data.get("report_markdown") or not result: raise ValueError("empty renderer response")
+        return {"report_markdown":data["report_markdown"],"evaluation_result":result,"final_status":str(result.get("status","human_review_required")),"technical_details":data.get("technical_details",fallback_details)}
+    except Exception as exc:
+        return {"report_markdown":"# AIGC 图片质量评估报告\n\n报告渲染失败，需要人工复核。","evaluation_result":{},"final_status":"human_review_required","technical_details":{"error":str(exc),"fallback":fallback_details}}
+'''
+    image_parser = base.node("2900000000203", "解析图片报告", "code", 2130, 920, base.code_data(image_parse_code, [base.var(["2900000000202","body"],"body"),base.var(["2900000000202","status_code"],"status_code","number"),base.var(["2900000000201","technical_details"],"fallback_details","object")], {"report_markdown":"string","evaluation_result":"object","final_status":"string","technical_details":"object"}), height=120)
+    image_end = base.node("2900000000204", "输出图片报告", "end", 2430, 920, {"outputs":[
+        {"value_selector":["2900000000203","report_markdown"],"value_type":"string","variable":"report_markdown"},{"value_selector":["2900000000203","evaluation_result"],"value_type":"object","variable":"evaluation_result"},{"value_selector":["2900000000203","final_status"],"value_type":"string","variable":"final_status"},{"value_selector":["2900000000203","technical_details"],"value_type":"object","variable":"technical_details"},
+    ]}, height=192)
+    nodes[:] = [item for item in nodes if item["id"] != "2900000000004"]
+    edges[:] = [item for item in edges if item["target"] != "2900000000004"]
+    nodes.extend([image_llm,image_normalizer,image_renderer,image_parser,image_end])
+    edges.extend([base.edge("2900000000002","2900000000200","if-else","llm","true"),base.edge("2900000000200","2900000000201","llm","code"),base.edge("2900000000201","2900000000202","code","http-request"),base.edge("2900000000202","2900000000203","http-request","code"),base.edge("2900000000202","2900000000203","http-request","code","fail-branch"),base.edge("2900000000203","2900000000204","code","end")])
     dsl["app"].update({"name": "AIGC Multimodal Quality V1 - CANDIDATE", "description": "Portfolio candidate for advertising video, image and script quality evaluation"})
     return dsl
 
