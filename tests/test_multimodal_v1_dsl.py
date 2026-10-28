@@ -1,10 +1,15 @@
 import hashlib
 import json
+import re
+import sys
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "workflow" / "tools"))
+import build_multimodal_v1
+from video_processor.evaluation import EvaluationRequest, EvaluationResult
 CANDIDATE = ROOT / "workflow" / "candidate" / "AIGC-Multimodal-QA-v1.yml"
 PROTECTED_HASHES = {
     ROOT / "workflow" / "current" / "AI-Ad-QA-current.yml": (
@@ -26,6 +31,12 @@ class MultimodalV1DslTests(unittest.TestCase):
 
     def node_data(self, node_type):
         return [node["data"] for node in self.nodes if node["data"].get("type") == node_type]
+
+    def run_code_node(self, title, **kwargs):
+        code = next(node["code"] for node in self.node_data("code") if node["title"] == title)
+        namespace = {}
+        exec(code, namespace)
+        return namespace["main"](**kwargs)
 
     def test_has_one_asset_type_entry_and_three_branches(self):
         starts = self.node_data("start")
@@ -134,6 +145,76 @@ class MultimodalV1DslTests(unittest.TestCase):
             code = node["code"]
             for field in ("source_type", "dimension", "finding", "priority", "problem", "impact", "suggestion", "expected_effect"):
                 self.assertIn(field, code, f"{title} missing {field}")
+
+    def test_builder_is_deterministic(self):
+        first = json.dumps(build_multimodal_v1.build_dsl(), ensure_ascii=False, sort_keys=True)
+        second = json.dumps(build_multimodal_v1.build_dsl(), ensure_ascii=False, sort_keys=True)
+        self.assertEqual(first, second)
+
+    def test_all_start_references_exist_and_video_extensions_match_backend(self):
+        start = self.node_data("start")[0]
+        variables = {item["variable"]: item for item in start["variables"]}
+        references = set(re.findall(r"\{\{#1900000000001\.([A-Za-z0-9_]+)#\}\}", self.text))
+        self.assertLessEqual(references, set(variables))
+        self.assertNotIn("ad_script", references)
+        self.assertNotIn("material_type", references)
+        self.assertEqual(variables["video"]["allowed_file_extensions"], [".MP4", ".MOV"])
+
+    def test_model_and_normalizer_failures_route_to_complete_review_result(self):
+        for title in ("评估广告图片", "规范化图片评估", "评估广告脚本", "规范化脚本评估"):
+            node = next(node for node in self.nodes if node["data"].get("title") == title)
+            self.assertEqual(node["data"].get("error_strategy"), "fail-branch")
+            fail_edges = [edge for edge in self.graph["edges"] if edge["source"] == node["id"] and edge["sourceHandle"] == "fail-branch"]
+            self.assertEqual(len(fail_edges), 1, title)
+        for title in ("图片分析失败转人工复核", "脚本分析失败转人工复核", "解析图片报告", "解析脚本报告", "解析报告响应"):
+            code = next(node["code"] for node in self.node_data("code") if node["title"] == title)
+            for field in ("asset_type", "profile", "status", "overall_score", "human_review_required", "run_summary"):
+                self.assertIn(field, code, f"{title} missing {field}")
+
+    def test_video_result_is_evidence_backed_and_not_hardcoded_as_evaluated(self):
+        code = next(node["code"] for node in self.node_data("code") if node["title"] == "转换视频评估结果")
+        self.assertIn("source_type", code)
+        self.assertIn("evidence_refs", code)
+        self.assertNotIn('"score":5', code)
+        self.assertIn('"status":"partial"', code)
+
+    def test_issue_and_suggestion_refs_use_known_evidence_ids(self):
+        for title in ("规范化图片评估", "规范化脚本评估"):
+            code = next(node["code"] for node in self.node_data("code") if node["title"] == title)
+            self.assertIn('evidence_ids=[item["id"] for item in evidence]', code)
+            self.assertIn('"evidence_refs":evidence_ids', code)
+
+    def test_script_precheck_strips_whitespace_before_validation(self):
+        precheck = next(node for node in self.node_data("code") if node["title"] == "脚本输入预检")
+        self.assertIn(".strip()", precheck["code"])
+        validator = next(node for node in self.node_data("if-else") if node["title"] == "脚本非空？")
+        self.assertIn("2900000000299", json.dumps(validator))
+
+    def test_normalizer_payloads_validate_against_fastapi_contract(self):
+        image = self.run_code_node(
+            "规范化图片评估",
+            analysis={"summary":"主体清晰","dimensions":[{"dimension":"subject","score":8,"reason":"主体居中"}],"evidence":[{"dimension":"subject","finding":"水杯位于画面中央"}],"issues":["行动引导偏弱"],"strengths":["主体清晰"],"suggestions":["增加明确按钮"],"confidence":0.8},
+            product_context="水杯", target_audience="通勤人群", conversion_goal="了解更多",
+        )
+        script = self.run_code_node(
+            "规范化脚本评估",
+            analysis={"summary":"结构完整","dimensions":[{"dimension":"hook","score":7,"reason":"场景明确"}],"evidence":[{"location":"场景1","dimension":"hook","finding":"开场提出通勤补水问题"}],"issues":["卖点较泛"],"strengths":["场景清晰"],"suggestions":["补充具体卖点"],"confidence":0.8},
+            product_context="水杯", target_audience="通勤人群", conversion_goal="了解更多",
+        )
+        video = self.run_code_node(
+            "转换视频评估结果",
+            state_json=json.dumps({"visual_evidence":[{"summary":"主体可见","evidence":["水杯在关键帧中居中"],"missing_dimensions":["cta"],"confidence":0.8}],"script_evidence":[],"missing_dimensions":[],"optimization_plan":{"changes":["增加结尾按钮"]},"current_step":2,"completed_actions":["analyze_frames"],"retry_count":0,"supplementary_rounds":0,"final_status":"partial"}),
+            product_context="水杯", target_audience="通勤人群", conversion_goal="了解更多",
+        )
+        for output in (image, script, video):
+            request = EvaluationRequest.model_validate(json.loads(output["evaluation_json"]))
+            self.assertTrue(all(item.evidence_refs for item in [*request.issues, *request.suggestions]))
+
+    def test_renderer_fallbacks_are_complete_evaluation_results(self):
+        for title in ("解析报告响应", "解析图片报告", "解析脚本报告"):
+            output = self.run_code_node(title, body="not-json", status_code=500, fallback_details={})
+            result = EvaluationResult.model_validate(output["evaluation_result"])
+            self.assertEqual(result.status, "human_review_required")
 
 
 if __name__ == "__main__":

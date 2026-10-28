@@ -1,6 +1,6 @@
 # AIGC 多模态内容质检 V1 验证记录
 
-验证日期：2026-10-28
+验证日期：2026-10-29
 
 ## 已完成能力
 
@@ -15,7 +15,7 @@
 
 - 候选生成器：`workflow/tools/build_multimodal_v1.py`。
 - 候选 DSL：`workflow/candidate/AIGC-Multimodal-QA-v1.yml`。
-- 全量单元测试：70 项通过，1 项因当前 Windows 无创建符号链接权限跳过。
+- 全量单元测试：79 项通过，1 项因当前 Windows 无创建符号链接权限跳过。
 - 受保护的 `current/AI-Ad-QA-current.yml` 与 `candidate/AI-Ad-QA-agent-v1.yml` 哈希保持不变。
 - 静态测试覆盖三分支路由、视觉文件选择器、脚本空值拦截、统一输出、报告与技术细节分离及契约字段。
 
@@ -27,6 +27,8 @@
 - `POST /api/v1/evaluations/render` 使用一条脚本样例请求返回：`status=partial`、`overall_score=70`、证据数 1。
 - Markdown 包含“总体结论”和“关键问题”，未出现 `state_json`。
 - 首次真实请求暴露图片/脚本证据字段与 FastAPI 契约不一致并返回 422；已将分支规范化器修复为 `source_type / dimension / finding` 等统一字段，并新增回归测试。
+
+独立代码审查又发现并修复：视频分支旧输入名残留、WEBM 前后端能力不一致、随机 UUID 导致生成器不可复现、模型/规范化失败缺少人工复核出口、渲染失败返回空结果、问题与证据未关联、纯空白脚本未拦截。视频 Agent 当前没有输出逐维度结构化数值分，因此转换器不再硬编码 5 分，而是明确标记为 `partial` 并要求人工复核。
 
 ## 当前未完成的 live gate
 

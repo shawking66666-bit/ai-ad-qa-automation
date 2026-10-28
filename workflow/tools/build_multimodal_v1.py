@@ -5,6 +5,8 @@ from __future__ import annotations
 from copy import deepcopy
 import json
 from pathlib import Path
+import re
+from uuid import NAMESPACE_URL, uuid5
 
 import build_agent_v1 as base
 
@@ -12,6 +14,7 @@ import build_agent_v1 as base
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "workflow" / "candidate" / "AIGC-Multimodal-QA-v1.yml"
 BASE_URL = "http://host.docker.internal:8000"
+UUID_PATTERN = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$")
 
 
 def _by_id(nodes: list[dict], node_id: str) -> dict:
@@ -21,7 +24,7 @@ def _by_id(nodes: list[dict], node_id: str) -> dict:
 def _start_variables() -> list[dict]:
     return [
         {"default": "video", "hide": False, "hint": "选择内容类型", "label": "内容类型", "options": ["video", "image", "script"], "placeholder": "", "required": True, "type": "select", "variable": "asset_type"},
-        {"allowed_file_extensions": [".MP4", ".MOV", ".WEBM"], "allowed_file_types": ["video"], "allowed_file_upload_methods": ["local_file"], "default": "", "hide": False, "hint": "video 时上传", "label": "广告视频", "options": [], "placeholder": "", "required": False, "type": "file", "variable": "video"},
+        {"allowed_file_extensions": [".MP4", ".MOV"], "allowed_file_types": ["video"], "allowed_file_upload_methods": ["local_file"], "default": "", "hide": False, "hint": "video 时上传", "label": "广告视频", "options": [], "placeholder": "", "required": False, "type": "file", "variable": "video"},
         {"allowed_file_extensions": [".JPG", ".JPEG", ".PNG", ".WEBP"], "allowed_file_types": ["image"], "allowed_file_upload_methods": ["local_file"], "default": "", "hide": False, "hint": "image 时上传", "label": "广告图片", "options": [], "placeholder": "", "required": False, "type": "file", "variable": "image"},
         {"default": "", "hide": False, "hint": "script 时填写", "label": "广告脚本", "max_length": 20000, "options": [], "placeholder": "粘贴脚本", "required": False, "type": "paragraph", "variable": "script"},
         {"default": "", "hide": False, "hint": "最低业务上下文", "label": "产品信息", "max_length": 10000, "options": [], "placeholder": "", "required": False, "type": "paragraph", "variable": "product_context"},
@@ -31,8 +34,51 @@ def _start_variables() -> list[dict]:
     ]
 
 
+def _stabilize_uuid_values(value, path: str = "root"):
+    if isinstance(value, dict):
+        return {key: _stabilize_uuid_values(item, f"{path}.{key}") for key, item in value.items()}
+    if isinstance(value, list):
+        return [_stabilize_uuid_values(item, f"{path}[{index}]") for index, item in enumerate(value)]
+    if isinstance(value, str) and UUID_PATTERN.fullmatch(value):
+        return str(uuid5(NAMESPACE_URL, f"ai-ad-qa-multimodal-v1:{path}"))
+    return value
+
+
+def _migrate_inherited_start_references(value):
+    if isinstance(value, dict):
+        return {key: _migrate_inherited_start_references(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_migrate_inherited_start_references(item) for item in value]
+    if isinstance(value, str):
+        return value.replace("1900000000001.ad_script#}}", "1900000000001.script#}}").replace(
+            "1900000000001.material_type#}}", "1900000000001.asset_type#}}"
+        )
+    return value
+
+
+def _report_parser_code(asset_type: str, profile: str, heading: str) -> str:
+    return f'''import json
+def main(body, status_code, fallback_details):
+    try:
+        if int(status_code)!=200: raise ValueError(f"renderer status={{status_code}}")
+        data=json.loads(body) if isinstance(body,str) else body; result=data.get("result",{{}})
+        if not data.get("report_markdown") or not result: raise ValueError("empty renderer response")
+        return {{"report_markdown":data["report_markdown"],"evaluation_result":result,"final_status":str(result.get("status","human_review_required")),"technical_details":data.get("technical_details",fallback_details)}}
+    except Exception as exc:
+        result={{"asset_type":"{asset_type}","profile":"{profile}","status":"human_review_required","overall_score":0,"summary":"报告渲染失败，需要人工复核。","dimensions":[],"evidence":[],"issues":[],"strengths":[],"suggestions":[],"missing_information":["rendered_report"],"confidence":0.0,"human_review_required":True,"human_review_reason":"报告渲染失败","run_summary":{{"steps":0,"completed_actions":[],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"renderer_failed"}}}}
+        return {{"report_markdown":"# {heading}\\n\\n报告渲染失败，需要人工复核。","evaluation_result":result,"final_status":"human_review_required","technical_details":{{"error":str(exc),"fallback":fallback_details}}}}
+'''
+
+
+def _model_fallback_code(asset_type: str, profile: str, heading: str) -> str:
+    return f'''def main():
+    result={{"asset_type":"{asset_type}","profile":"{profile}","status":"human_review_required","overall_score":0,"summary":"模型分析或结构化处理失败，需要人工复核。","dimensions":[],"evidence":[],"issues":[],"strengths":[],"suggestions":[],"missing_information":["model_evaluation"],"confidence":0.0,"human_review_required":True,"human_review_reason":"模型分析或结构化处理失败","run_summary":{{"steps":0,"completed_actions":[],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"model_or_normalizer_failed"}}}}
+    return {{"report_markdown":"# {heading}\\n\\n模型分析或结构化处理失败，需要人工复核。","evaluation_result":result,"final_status":"human_review_required","technical_details":{{"failure_stage":"model_or_normalizer"}}}}
+'''
+
+
 def build_dsl() -> dict:
-    dsl = deepcopy(base.dsl)
+    dsl = _migrate_inherited_start_references(deepcopy(base.dsl))
     graph = dsl["workflow"]["graph"]
     nodes, edges = graph["nodes"], graph["edges"]
     start = _by_id(nodes, "1900000000001")
@@ -71,26 +117,36 @@ def main(state_json, product_context, target_audience, conversion_goal):
     if not str(product_context or "").strip(): missing.append("product_context")
     if not str(target_audience or "").strip(): missing.append("target_audience")
     if not str(conversion_goal or "").strip(): missing.append("conversion_goal")
-    known_missing=set(state.get("missing_dimensions", [])); dimensions=[]
+    analyses=[*(state.get("visual_evidence") or []),*(state.get("script_evidence") or [])]
+    known_missing=set(state.get("missing_dimensions", []))
+    for analysis in analyses:
+        if isinstance(analysis,dict): known_missing.update(analysis.get("missing_dimensions",[]) or [])
+    dimensions=[]
     for key,label in DIMENSIONS:
-        partial=key in known_missing
-        dimensions.append({"dimension":key,"label":label,"score":5,"max_score":10,"status":"partial" if partial else "evaluated","reason":"Agent证据不足" if partial else "已完成基础证据检查"})
-    evidence=[*state.get("visual_evidence", []),*state.get("script_evidence", [])]
-    summary="；".join(str(x.get("summary", "")) for x in evidence if isinstance(x,dict) and x.get("summary")) or "已完成广告视频基础质量评估。"
-    payload={"asset_type":"video","profile":"ad_video_v1","summary":summary,"dimensions":dimensions,"evidence":[],"issues":[],"strengths":[],"suggestions":[],"missing_information":missing,"confidence":0.7 if state.get("visual_evidence") else 0.4,"human_review_required":bool(state.get("needs_human_review")),"human_review_reason":"Agent要求人工复核" if state.get("needs_human_review") else None,"run_summary":{"steps":int(state.get("current_step",0)),"completed_actions":state.get("completed_actions",[]),"supplementary_frames_used":bool(state.get("supplementary_rounds",0)),"retry_count":int(state.get("retry_count",0)),"stop_reason":state.get("final_status","unknown")},"technical_details":{"state_json":state}}
+        reason="Agent 当前只返回证据，未提供该维度的结构化评分"
+        if key in known_missing: reason="Agent 明确报告该维度证据不足"
+        dimensions.append({"dimension":key,"label":label,"score":0,"max_score":10,"status":"partial","reason":reason})
+    evidence=[]
+    for group_index,analysis in enumerate(analyses):
+        if not isinstance(analysis,dict): continue
+        source_type="video_frame" if group_index < len(state.get("visual_evidence") or []) else "text_span"
+        for finding in analysis.get("evidence",[]) or []:
+            if not str(finding).strip(): continue
+            evidence.append({"id":f"video-{len(evidence)+1}","source_type":source_type,"location":f"Agent分析{group_index+1}","dimension":"overall","finding":str(finding),"confidence":float(analysis.get("confidence",0))})
+    evidence_ids=[item["id"] for item in evidence]
+    issues=[{"priority":"P1","dimension":"overall","problem":item["finding"],"impact":"该证据可能影响广告表达质量，需结合业务目标复核","evidence_refs":[item["id"]],"suggestion":"围绕该证据调整素材并复核"} for item in evidence]
+    changes=(state.get("optimization_plan") or {}).get("changes",[]) if isinstance(state.get("optimization_plan"),dict) else []
+    suggestions=[{"priority":"P1" if i<2 else "P2","action":str(change),"expected_effect":"提升广告内容表达质量","evidence_refs":evidence_ids} for i,change in enumerate(changes) if str(change).strip()]
+    summary="；".join(str(x.get("summary", "")) for x in analyses if isinstance(x,dict) and x.get("summary")) or "视频 Agent 未返回足够的结构化评估证据。"
+    confidence=min([float(x.get("confidence",0)) for x in analyses if isinstance(x,dict)] or [0.0])
+    review=True
+    payload={"asset_type":"video","profile":"ad_video_v1","summary":summary,"dimensions":dimensions,"evidence":evidence,"issues":issues,"strengths":[],"suggestions":suggestions,"missing_information":missing+sorted(known_missing),"confidence":confidence,"human_review_required":review,"human_review_reason":"当前视频 Agent 未输出可验证的逐维度数值评分，需人工复核","run_summary":{"steps":int(state.get("current_step",0)),"completed_actions":state.get("completed_actions",[]),"supplementary_frames_used":bool(state.get("supplementary_rounds",0)),"retry_count":int(state.get("retry_count",0)),"stop_reason":state.get("final_status","unknown")},"technical_details":{"state_json":state}}
     return {"evaluation_json":json.dumps(payload,ensure_ascii=False),"technical_details":state}
 '''
     converter = base.node("2900000000100", "转换视频评估结果", "code", 5520, 360, base.code_data(convert_code, [base.var([base.LOOP_ID, "state_json"], "state_json"), base.var(["1900000000001", "product_context"], "product_context"), base.var(["1900000000001", "target_audience"], "target_audience"), base.var(["1900000000001", "conversion_goal"], "conversion_goal")], {"evaluation_json": "string", "technical_details": "object"}))
     render_body = {"type": "json", "data": [{"id": "evaluation-json", "key": "", "type": "text", "value": "{{#2900000000100.evaluation_json#}}"}]}
     renderer = base.node("2900000000101", "渲染人类可读报告", "http-request", 5820, 360, base.http_data("post", f"{BASE_URL}/api/v1/evaluations/render", render_body))
-    parse_code = '''import json
-def main(body, status_code, fallback_details):
-    try:
-        data=json.loads(body) if isinstance(body,str) else body; result=data.get("result",{})
-        return {"report_markdown":str(data.get("report_markdown","")),"evaluation_result":result,"final_status":str(result.get("status","human_review_required")),"technical_details":data.get("technical_details",fallback_details)}
-    except Exception as exc:
-        return {"report_markdown":"# AIGC 内容质量评估报告\\n\\n报告渲染失败，需要人工复核。","evaluation_result":{},"final_status":"human_review_required","technical_details":{"error":str(exc),"fallback":fallback_details}}
-'''
+    parse_code = _report_parser_code("video", "ad_video_v1", "AIGC 视频质量评估报告")
     parser = base.node("2900000000102", "解析报告响应", "code", 6120, 360, base.code_data(parse_code, [base.var(["2900000000101", "body"], "body"), base.var(["2900000000101", "status_code"], "status_code", "number"), base.var(["2900000000100", "technical_details"], "fallback_details", "object")], {"report_markdown": "string", "evaluation_result": "object", "final_status": "string", "technical_details": "object"}))
     final = base.node("2900000000103", "输出多模态报告", "end", 6420, 360, {"outputs": [
         {"value_selector": ["2900000000102", "report_markdown"], "value_type": "string", "variable": "report_markdown"},
@@ -130,6 +186,7 @@ def main(body, status_code, fallback_details):
         "profile: ad_image_v1\n产品信息：{{#1900000000001.product_context#}}\n目标受众：{{#1900000000001.target_audience#}}\n转化目标：{{#1900000000001.conversion_goal#}}\n补充要求：{{#1900000000001.additional_requirements#}}",
         image_schema, ["1900000000001", "image"],
     ), height=120)
+    image_llm["data"]["error_strategy"] = "fail-branch"
     image_normalize_code = '''import json
 LABELS={"subject":"主体呈现","composition":"画面构图","readability":"文字可读性","selling_point":"卖点表达","audience":"受众匹配","cta":"行动引导","risk":"内容风险"}
 def main(analysis, product_context, target_audience, conversion_goal):
@@ -145,8 +202,9 @@ def main(analysis, product_context, target_audience, conversion_goal):
     for key,label in LABELS.items():
         if key not in seen: dims.append({"dimension":key,"label":label,"score":0,"max_score":10,"status":"partial","reason":"模型未返回该维度，需人工复核"})
     evidence=[{"id":f"img-{i+1}","source_type":"image","location":"image:1","dimension":item.get("dimension","overall"),"finding":item.get("finding",""),"confidence":analysis.get("confidence",0)} for i,item in enumerate(analysis.get("evidence",[])) if item.get("finding")]
-    issues=[{"priority":"P1","dimension":"overall","problem":text,"impact":"可能降低广告信息传达效果","evidence_refs":[],"suggestion":"根据问题调整画面后复核"} for text in analysis.get("issues",[])]
-    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"expected_effect":"提升广告信息传达质量","evidence_refs":[]} for i,text in enumerate(analysis.get("suggestions",[]))]
+    evidence_ids=[item["id"] for item in evidence]
+    issues=[{"priority":"P1","dimension":"overall","problem":text,"impact":"可能降低广告信息传达效果","evidence_refs":evidence_ids,"suggestion":"根据问题调整画面后复核"} for text in analysis.get("issues",[]) if evidence_ids]
+    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"expected_effect":"提升广告信息传达质量","evidence_refs":evidence_ids} for i,text in enumerate(analysis.get("suggestions",[])) if evidence_ids]
     confidence=float(analysis.get("confidence",0)); incomplete=any(x["status"]=="partial" for x in dims)
     payload={"asset_type":"image","profile":"ad_image_v1","summary":analysis.get("summary","") or "图片评估需要人工复核。","dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":incomplete or confidence<0.6,"human_review_reason":"评分维度缺失或模型置信度偏低" if incomplete or confidence<0.6 else None,"run_summary":{"steps":1,"completed_actions":["single_vision_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"vision_call":"single_pass"}}
     return {"evaluation_json":json.dumps(payload,ensure_ascii=False),"technical_details":{"vision_call":"single_pass","raw_analysis":analysis}}
@@ -154,26 +212,25 @@ def main(analysis, product_context, target_audience, conversion_goal):
     image_normalizer = base.node("2900000000201", "规范化图片评估", "code", 1530, 920, base.code_data(image_normalize_code, [
         base.var(["2900000000200", "structured_output"], "analysis", "object"), base.var(["1900000000001", "product_context"], "product_context"), base.var(["1900000000001", "target_audience"], "target_audience"), base.var(["1900000000001", "conversion_goal"], "conversion_goal")
     ], {"evaluation_json":"string","technical_details":"object"}), height=120)
+    image_normalizer["data"]["error_strategy"] = "fail-branch"
     image_body = {"type":"json","data":[{"id":"image-evaluation-json","key":"","type":"text","value":"{{#2900000000201.evaluation_json#}}"}]}
     image_renderer = base.node("2900000000202", "渲染图片报告", "http-request", 1830, 920, base.http_data("post", f"{BASE_URL}/api/v1/evaluations/render", image_body))
-    image_parse_code = '''import json
-def main(body, status_code, fallback_details):
-    try:
-        if int(status_code)!=200: raise ValueError(f"renderer status={status_code}")
-        data=json.loads(body) if isinstance(body,str) else body; result=data.get("result",{})
-        if not data.get("report_markdown") or not result: raise ValueError("empty renderer response")
-        return {"report_markdown":data["report_markdown"],"evaluation_result":result,"final_status":str(result.get("status","human_review_required")),"technical_details":data.get("technical_details",fallback_details)}
-    except Exception as exc:
-        return {"report_markdown":"# AIGC 图片质量评估报告\n\n报告渲染失败，需要人工复核。","evaluation_result":{},"final_status":"human_review_required","technical_details":{"error":str(exc),"fallback":fallback_details}}
-'''
+    image_parse_code = _report_parser_code("image", "ad_image_v1", "AIGC 图片质量评估报告")
     image_parser = base.node("2900000000203", "解析图片报告", "code", 2130, 920, base.code_data(image_parse_code, [base.var(["2900000000202","body"],"body"),base.var(["2900000000202","status_code"],"status_code","number"),base.var(["2900000000201","technical_details"],"fallback_details","object")], {"report_markdown":"string","evaluation_result":"object","final_status":"string","technical_details":"object"}), height=120)
     image_end = base.node("2900000000204", "输出图片报告", "end", 2430, 920, {"outputs":[
         {"value_selector":["2900000000203","report_markdown"],"value_type":"string","variable":"report_markdown"},{"value_selector":["2900000000203","evaluation_result"],"value_type":"object","variable":"evaluation_result"},{"value_selector":["2900000000203","final_status"],"value_type":"string","variable":"final_status"},{"value_selector":["2900000000203","technical_details"],"value_type":"object","variable":"technical_details"},
     ]}, height=192)
+    image_fallback = base.node("2900000000205", "图片分析失败转人工复核", "code", 1830, 1040, base.code_data(
+        _model_fallback_code("image", "ad_image_v1", "AIGC 图片质量评估报告"), [],
+        {"report_markdown":"string","evaluation_result":"object","final_status":"string","technical_details":"object"},
+    ), height=120)
+    image_fallback_end = base.node("2900000000206", "输出图片人工复核结果", "end", 2130, 1040, {"outputs":[
+        {"value_selector":["2900000000205","report_markdown"],"value_type":"string","variable":"report_markdown"},{"value_selector":["2900000000205","evaluation_result"],"value_type":"object","variable":"evaluation_result"},{"value_selector":["2900000000205","final_status"],"value_type":"string","variable":"final_status"},{"value_selector":["2900000000205","technical_details"],"value_type":"object","variable":"technical_details"},
+    ]}, height=192)
     nodes[:] = [item for item in nodes if item["id"] != "2900000000004"]
     edges[:] = [item for item in edges if item["target"] != "2900000000004"]
-    nodes.extend([image_llm,image_normalizer,image_renderer,image_parser,image_end])
-    edges.extend([base.edge("2900000000002","2900000000200","if-else","llm","true"),base.edge("2900000000200","2900000000201","llm","code"),base.edge("2900000000201","2900000000202","code","http-request"),base.edge("2900000000202","2900000000203","http-request","code"),base.edge("2900000000202","2900000000203","http-request","code","fail-branch"),base.edge("2900000000203","2900000000204","code","end")])
+    nodes.extend([image_llm,image_normalizer,image_renderer,image_parser,image_end,image_fallback,image_fallback_end])
+    edges.extend([base.edge("2900000000002","2900000000200","if-else","llm","true"),base.edge("2900000000200","2900000000201","llm","code"),base.edge("2900000000200","2900000000205","llm","code","fail-branch"),base.edge("2900000000201","2900000000202","code","http-request"),base.edge("2900000000201","2900000000205","code","code","fail-branch"),base.edge("2900000000202","2900000000203","http-request","code"),base.edge("2900000000202","2900000000203","http-request","code","fail-branch"),base.edge("2900000000203","2900000000204","code","end"),base.edge("2900000000205","2900000000206","code","end")])
 
     script_dimensions = ["hook", "pain_point", "selling_point", "audience", "structure", "cta", "claim_risk"]
     script_schema = {
@@ -184,15 +241,21 @@ def main(body, status_code, fallback_details):
             "issues":{"type":"array","items":{"type":"string"}},"strengths":{"type":"array","items":{"type":"string"}},"suggestions":{"type":"array","items":{"type":"string"}},"confidence":{"type":"number","minimum":0,"maximum":1},
         },"required":["summary","dimensions","evidence","issues","strengths","suggestions","confidence"],
     }
-    script_validator = base.node("2900000000300","脚本非空？","if-else",1230,1160,base.if_data(["1900000000001","script"],"","string","not empty"))
+    script_precheck_code='''def main(script):
+    normalized=str(script or "").strip()
+    return {"has_script":bool(normalized),"normalized_script":normalized}
+'''
+    script_precheck=base.node("2900000000299","脚本输入预检","code",1230,1160,base.code_data(script_precheck_code,[base.var(["1900000000001","script"],"script")],{"has_script":"boolean","normalized_script":"string"}))
+    script_validator = base.node("2900000000300","脚本非空？","if-else",1530,1160,base.if_data(["2900000000299","has_script"],True,"boolean","is"))
     empty_script = base.node("2900000000301","拒绝空脚本","end",1530,1280,{"outputs":[
-        {"value_selector":["1900000000001","script"],"value_type":"string","variable":"invalid_script"},
+        {"value_selector":["2900000000299","normalized_script"],"value_type":"string","variable":"invalid_script"},
     ]})
     script_llm = base.node("2900000000302","评估广告脚本","llm",1530,1100,base.llm_data(
         "你是广告脚本质量审核员。只根据原文和提供的业务上下文判断，不得补写原文没有的事实。逐项评估 hook、pain_point、selling_point、audience、structure、cta、claim_risk。每条证据必须使用段落编号或场景编号作为 location，便于人工回看。",
-        "profile: ad_script_v1\n脚本原文：{{#1900000000001.script#}}\n产品信息：{{#1900000000001.product_context#}}\n目标受众：{{#1900000000001.target_audience#}}\n转化目标：{{#1900000000001.conversion_goal#}}\n补充要求：{{#1900000000001.additional_requirements#}}",
+        "profile: ad_script_v1\n脚本原文：{{#2900000000299.normalized_script#}}\n产品信息：{{#1900000000001.product_context#}}\n目标受众：{{#1900000000001.target_audience#}}\n转化目标：{{#1900000000001.conversion_goal#}}\n补充要求：{{#1900000000001.additional_requirements#}}",
         script_schema,
     ),height=120)
+    script_llm["data"]["error_strategy"] = "fail-branch"
     script_normalize_code='''import json
 LABELS={"hook":"开场钩子","pain_point":"痛点表达","selling_point":"卖点表达","audience":"受众匹配","structure":"脚本结构","cta":"行动引导","claim_risk":"宣称风险"}
 def main(analysis, product_context, target_audience, conversion_goal):
@@ -209,33 +272,28 @@ def main(analysis, product_context, target_audience, conversion_goal):
     evidence=[]
     for i,item in enumerate(analysis.get("evidence",[])):
         if item.get("finding"): evidence.append({"id":f"script-{i+1}","source_type":"text_span","location":str(item.get("location","未定位")),"dimension":str(item.get("dimension","overall")),"finding":str(item.get("finding","")),"confidence":analysis.get("confidence",0)})
-    issues=[{"priority":"P1","dimension":"overall","problem":text,"impact":"可能降低脚本表达或转化效果","evidence_refs":[],"suggestion":"根据问题改写对应段落后复核"} for text in analysis.get("issues",[])]
-    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"expected_effect":"提升脚本表达与转化清晰度","evidence_refs":[]} for i,text in enumerate(analysis.get("suggestions",[]))]
+    evidence_ids=[item["id"] for item in evidence]
+    issues=[{"priority":"P1","dimension":"overall","problem":text,"impact":"可能降低脚本表达或转化效果","evidence_refs":evidence_ids,"suggestion":"根据问题改写对应段落后复核"} for text in analysis.get("issues",[]) if evidence_ids]
+    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"expected_effect":"提升脚本表达与转化清晰度","evidence_refs":evidence_ids} for i,text in enumerate(analysis.get("suggestions",[])) if evidence_ids]
     confidence=float(analysis.get("confidence",0)); incomplete=any(x["status"]=="partial" for x in dims)
     payload={"asset_type":"script","profile":"ad_script_v1","summary":analysis.get("summary","") or "脚本评估需要人工复核。","dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":incomplete or confidence<0.6,"human_review_reason":"评分维度缺失或模型置信度偏低" if incomplete or confidence<0.6 else None,"run_summary":{"steps":1,"completed_actions":["single_script_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"text_call":"single_pass"}}
     return {"evaluation_json":json.dumps(payload,ensure_ascii=False),"technical_details":{"text_call":"single_pass","raw_analysis":analysis}}
 '''
     script_normalizer=base.node("2900000000303","规范化脚本评估","code",1830,1100,base.code_data(script_normalize_code,[base.var(["2900000000302","structured_output"],"analysis","object"),base.var(["1900000000001","product_context"],"product_context"),base.var(["1900000000001","target_audience"],"target_audience"),base.var(["1900000000001","conversion_goal"],"conversion_goal")],{"evaluation_json":"string","technical_details":"object"}),height=120)
+    script_normalizer["data"]["error_strategy"] = "fail-branch"
     script_body={"type":"json","data":[{"id":"script-evaluation-json","key":"","type":"text","value":"{{#2900000000303.evaluation_json#}}"}]}
     script_renderer=base.node("2900000000304","渲染脚本报告","http-request",2130,1100,base.http_data("post",f"{BASE_URL}/api/v1/evaluations/render",script_body))
-    script_parse_code='''import json
-def main(body, status_code, fallback_details):
-    try:
-        if int(status_code)!=200: raise ValueError(f"renderer status={status_code}")
-        data=json.loads(body) if isinstance(body,str) else body; result=data.get("result",{})
-        if not data.get("report_markdown") or not result: raise ValueError("empty renderer response")
-        return {"report_markdown":data["report_markdown"],"evaluation_result":result,"final_status":str(result.get("status","human_review_required")),"technical_details":data.get("technical_details",fallback_details)}
-    except Exception as exc:
-        return {"report_markdown":"# AIGC 脚本质量评估报告\n\n报告渲染失败，需要人工复核。","evaluation_result":{},"final_status":"human_review_required","technical_details":{"error":str(exc),"fallback":fallback_details}}
-'''
+    script_parse_code=_report_parser_code("script", "ad_script_v1", "AIGC 脚本质量评估报告")
     script_parser=base.node("2900000000305","解析脚本报告","code",2430,1100,base.code_data(script_parse_code,[base.var(["2900000000304","body"],"body"),base.var(["2900000000304","status_code"],"status_code","number"),base.var(["2900000000303","technical_details"],"fallback_details","object")],{"report_markdown":"string","evaluation_result":"object","final_status":"string","technical_details":"object"}),height=120)
     script_end=base.node("2900000000306","输出脚本报告","end",2730,1100,{"outputs":[{"value_selector":["2900000000305","report_markdown"],"value_type":"string","variable":"report_markdown"},{"value_selector":["2900000000305","evaluation_result"],"value_type":"object","variable":"evaluation_result"},{"value_selector":["2900000000305","final_status"],"value_type":"string","variable":"final_status"},{"value_selector":["2900000000305","technical_details"],"value_type":"object","variable":"technical_details"}]},height=192)
+    script_fallback=base.node("2900000000307","脚本分析失败转人工复核","code",2130,1240,base.code_data(_model_fallback_code("script","ad_script_v1","AIGC 脚本质量评估报告"),[],{"report_markdown":"string","evaluation_result":"object","final_status":"string","technical_details":"object"}),height=120)
+    script_fallback_end=base.node("2900000000308","输出脚本人工复核结果","end",2430,1240,{"outputs":[{"value_selector":["2900000000307","report_markdown"],"value_type":"string","variable":"report_markdown"},{"value_selector":["2900000000307","evaluation_result"],"value_type":"object","variable":"evaluation_result"},{"value_selector":["2900000000307","final_status"],"value_type":"string","variable":"final_status"},{"value_selector":["2900000000307","technical_details"],"value_type":"object","variable":"technical_details"}]},height=192)
     nodes[:]=[item for item in nodes if item["id"]!="2900000000005"]
     edges[:]=[item for item in edges if item["target"]!="2900000000005"]
-    nodes.extend([script_validator,empty_script,script_llm,script_normalizer,script_renderer,script_parser,script_end])
-    edges.extend([base.edge("2900000000003","2900000000300","if-else","if-else","true"),base.edge("2900000000300","2900000000302","if-else","llm","true"),base.edge("2900000000300","2900000000301","if-else","end","false"),base.edge("2900000000302","2900000000303","llm","code"),base.edge("2900000000303","2900000000304","code","http-request"),base.edge("2900000000304","2900000000305","http-request","code"),base.edge("2900000000304","2900000000305","http-request","code","fail-branch"),base.edge("2900000000305","2900000000306","code","end")])
+    nodes.extend([script_precheck,script_validator,empty_script,script_llm,script_normalizer,script_renderer,script_parser,script_end,script_fallback,script_fallback_end])
+    edges.extend([base.edge("2900000000003","2900000000299","if-else","code","true"),base.edge("2900000000299","2900000000300","code","if-else"),base.edge("2900000000300","2900000000302","if-else","llm","true"),base.edge("2900000000300","2900000000301","if-else","end","false"),base.edge("2900000000302","2900000000303","llm","code"),base.edge("2900000000302","2900000000307","llm","code","fail-branch"),base.edge("2900000000303","2900000000304","code","http-request"),base.edge("2900000000303","2900000000307","code","code","fail-branch"),base.edge("2900000000304","2900000000305","http-request","code"),base.edge("2900000000304","2900000000305","http-request","code","fail-branch"),base.edge("2900000000305","2900000000306","code","end"),base.edge("2900000000307","2900000000308","code","end")])
     dsl["app"].update({"name": "AIGC Multimodal Quality V1 - CANDIDATE", "description": "Portfolio candidate for advertising video, image and script quality evaluation"})
-    return dsl
+    return _stabilize_uuid_values(dsl)
 
 
 def main() -> None:
