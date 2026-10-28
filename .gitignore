@@ -16,6 +16,7 @@ work/
 *.jpg
 *.jpeg
 *.png
+!tests/fixtures/multimodal/sample_image.png
 
 video_processor_data/
 Dify上传文件/
