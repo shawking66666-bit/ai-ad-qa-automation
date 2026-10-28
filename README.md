@@ -1,5 +1,16 @@
 # AI Ad QA Video Processor
 
+## AIGC 多模态内容质检 V1（候选）
+
+当前功能分支新增一个作品集级候选工作流，统一审核广告视频、广告图片和广告脚本，并输出结构化评分、可追溯证据、问题清单、优化建议和人类可读 Markdown 报告。
+
+- 候选 DSL：`workflow/candidate/AIGC-Multimodal-QA-v1.yml`
+- 确定性生成器：`workflow/tools/build_multimodal_v1.py`
+- 公开测试素材：`tests/fixtures/multimodal/`
+- 验证边界：`docs/multimodal-v1-validation.md`
+
+该版本不会自动替换 current。当前状态为自动化测试和本地 FastAPI 报告接口已验证，Dify 三素材端到端 live run 尚未完成。
+
 Local FastAPI service used by the Dify workflow to extract fixed-time JPEG
 frames from uploaded MP4 and MOV advertising videos.
 

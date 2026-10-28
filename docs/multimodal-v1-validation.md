@@ -1,0 +1,48 @@
+# AIGC 多模态内容质检 V1 验证记录
+
+验证日期：2026-10-28
+
+## 已完成能力
+
+- 一个候选 Dify Workflow 通过 `asset_type` 路由视频、图片、脚本三类素材。
+- 视频保留最多 5 步的受控 Agent、补帧上限和任务清理机制。
+- 图片使用一次真实视觉输入调用，不创建循环。
+- 脚本在模型调用前拒绝空文本，证据要求定位到段落或场景。
+- 三类分支使用统一评估契约，并将结构化结果渲染为人类可读 Markdown。
+- 对外报告与 `technical_details` 分离；报告正文不输出 `state_json`。
+
+## 自动化证据
+
+- 候选生成器：`workflow/tools/build_multimodal_v1.py`。
+- 候选 DSL：`workflow/candidate/AIGC-Multimodal-QA-v1.yml`。
+- 全量单元测试：70 项通过，1 项因当前 Windows 无创建符号链接权限跳过。
+- 受保护的 `current/AI-Ad-QA-current.yml` 与 `candidate/AI-Ad-QA-agent-v1.yml` 哈希保持不变。
+- 静态测试覆盖三分支路由、视觉文件选择器、脚本空值拦截、统一输出、报告与技术细节分离及契约字段。
+
+## 本地真实接口检查
+
+临时启动当前分支 FastAPI 后：
+
+- `GET http://localhost:8000/health` 返回 `status=ok`。
+- `POST /api/v1/evaluations/render` 使用一条脚本样例请求返回：`status=partial`、`overall_score=70`、证据数 1。
+- Markdown 包含“总体结论”和“关键问题”，未出现 `state_json`。
+- 首次真实请求暴露图片/脚本证据字段与 FastAPI 契约不一致并返回 422；已将分支规范化器修复为 `source_type / dimension / finding` 等统一字段，并新增回归测试。
+
+## 当前未完成的 live gate
+
+本次检查时 `http://localhost:18080` 拒绝连接，Dify 未运行。因此本轮没有导入候选应用，也没有执行视频、图片、脚本各一次的真实模型运行。以下内容不得宣称已完成：
+
+- 当前候选 DSL 在本机 Dify 版本中的成功导入。
+- 图片文件在候选工作流中实际传入视觉模型并产生图片特异证据。
+- 三类素材从 Dify 输入到最终报告的端到端结果。
+- 对真实广告质量的准确率、召回率或人工一致性。
+
+项目已有运行手册记录过 DeepSeek 单图视觉预检成功，但该历史记录不能替代本候选版本的本轮端到端验证。
+
+## 后续验证步骤
+
+1. 启动既有 Dify，不修改 `.env`、凭据、Docker 或防火墙。
+2. 以新候选应用导入 `AIGC-Multimodal-QA-v1.yml`，不得覆盖 current。
+3. 使用本目录图片与脚本、以及 `tests/video_fixtures.py` 生成的视频各运行一次。
+4. 每类记录最终状态、总分、问题数、证据数、人工复核标记、报告标题及是否泄漏原始 JSON。
+5. 只有三条链路均通过后，才把状态从“自动化完成、Dify live 未验证”升级为“本地端到端验证完成”。

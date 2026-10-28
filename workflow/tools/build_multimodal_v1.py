@@ -117,7 +117,7 @@ def main(body, status_code, fallback_details):
             "dimensions": {"type": "array", "items": {"type": "object", "additionalProperties": False, "properties": {
                 "dimension": {"type": "string", "enum": image_dimensions}, "score": {"type": "number", "minimum": 0, "maximum": 10}, "reason": {"type": "string"},
             }, "required": ["dimension", "score", "reason"]}},
-            "evidence": {"type": "array", "items": {"type": "string"}},
+            "evidence": {"type": "array", "items": {"type":"object","additionalProperties":False,"properties":{"dimension":{"type":"string","enum":image_dimensions},"finding":{"type":"string"}},"required":["dimension","finding"]}},
             "issues": {"type": "array", "items": {"type": "string"}},
             "strengths": {"type": "array", "items": {"type": "string"}},
             "suggestions": {"type": "array", "items": {"type": "string"}},
@@ -144,9 +144,9 @@ def main(analysis, product_context, target_audience, conversion_goal):
             seen.add(key); dims.append({"dimension":key,"label":LABELS[key],"score":item.get("score",0),"max_score":10,"status":"evaluated","reason":item.get("reason","")})
     for key,label in LABELS.items():
         if key not in seen: dims.append({"dimension":key,"label":label,"score":0,"max_score":10,"status":"partial","reason":"模型未返回该维度，需人工复核"})
-    evidence=[{"id":f"img-{i+1}","source":"image","location":"整张图片","content":text,"confidence":analysis.get("confidence",0)} for i,text in enumerate(analysis.get("evidence",[]))]
-    issues=[{"title":text,"severity":"medium","description":text,"evidence_refs":[]} for text in analysis.get("issues",[])]
-    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"rationale":"基于图片审核发现","expected_impact":"提升广告信息传达质量"} for i,text in enumerate(analysis.get("suggestions",[]))]
+    evidence=[{"id":f"img-{i+1}","source_type":"image","location":"image:1","dimension":item.get("dimension","overall"),"finding":item.get("finding",""),"confidence":analysis.get("confidence",0)} for i,item in enumerate(analysis.get("evidence",[])) if item.get("finding")]
+    issues=[{"priority":"P1","dimension":"overall","problem":text,"impact":"可能降低广告信息传达效果","evidence_refs":[],"suggestion":"根据问题调整画面后复核"} for text in analysis.get("issues",[])]
+    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"expected_effect":"提升广告信息传达质量","evidence_refs":[]} for i,text in enumerate(analysis.get("suggestions",[]))]
     confidence=float(analysis.get("confidence",0)); incomplete=any(x["status"]=="partial" for x in dims)
     payload={"asset_type":"image","profile":"ad_image_v1","summary":analysis.get("summary","") or "图片评估需要人工复核。","dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":incomplete or confidence<0.6,"human_review_reason":"评分维度缺失或模型置信度偏低" if incomplete or confidence<0.6 else None,"run_summary":{"steps":1,"completed_actions":["single_vision_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"vision_call":"single_pass"}}
     return {"evaluation_json":json.dumps(payload,ensure_ascii=False),"technical_details":{"vision_call":"single_pass","raw_analysis":analysis}}
@@ -180,7 +180,7 @@ def main(body, status_code, fallback_details):
         "type":"object","additionalProperties":False,"properties":{
             "summary":{"type":"string"},
             "dimensions":{"type":"array","items":{"type":"object","additionalProperties":False,"properties":{"dimension":{"type":"string","enum":script_dimensions},"score":{"type":"number","minimum":0,"maximum":10},"reason":{"type":"string"}},"required":["dimension","score","reason"]}},
-            "evidence":{"type":"array","items":{"type":"object","additionalProperties":False,"properties":{"location":{"type":"string","description":"段落编号或场景编号"},"content":{"type":"string"}},"required":["location","content"]}},
+            "evidence":{"type":"array","items":{"type":"object","additionalProperties":False,"properties":{"location":{"type":"string","description":"段落编号或场景编号"},"dimension":{"type":"string","enum":script_dimensions},"finding":{"type":"string"}},"required":["location","dimension","finding"]}},
             "issues":{"type":"array","items":{"type":"string"}},"strengths":{"type":"array","items":{"type":"string"}},"suggestions":{"type":"array","items":{"type":"string"}},"confidence":{"type":"number","minimum":0,"maximum":1},
         },"required":["summary","dimensions","evidence","issues","strengths","suggestions","confidence"],
     }
@@ -208,9 +208,9 @@ def main(analysis, product_context, target_audience, conversion_goal):
         if key not in seen: dims.append({"dimension":key,"label":label,"score":0,"max_score":10,"status":"partial","reason":"模型未返回该维度，需人工复核"})
     evidence=[]
     for i,item in enumerate(analysis.get("evidence",[])):
-        evidence.append({"id":f"script-{i+1}","source":"script","location":str(item.get("location","未定位")),"content":str(item.get("content","")),"confidence":analysis.get("confidence",0)})
-    issues=[{"title":text,"severity":"medium","description":text,"evidence_refs":[]} for text in analysis.get("issues",[])]
-    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"rationale":"基于脚本审核发现","expected_impact":"提升脚本表达与转化清晰度"} for i,text in enumerate(analysis.get("suggestions",[]))]
+        if item.get("finding"): evidence.append({"id":f"script-{i+1}","source_type":"text_span","location":str(item.get("location","未定位")),"dimension":str(item.get("dimension","overall")),"finding":str(item.get("finding","")),"confidence":analysis.get("confidence",0)})
+    issues=[{"priority":"P1","dimension":"overall","problem":text,"impact":"可能降低脚本表达或转化效果","evidence_refs":[],"suggestion":"根据问题改写对应段落后复核"} for text in analysis.get("issues",[])]
+    suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"expected_effect":"提升脚本表达与转化清晰度","evidence_refs":[]} for i,text in enumerate(analysis.get("suggestions",[]))]
     confidence=float(analysis.get("confidence",0)); incomplete=any(x["status"]=="partial" for x in dims)
     payload={"asset_type":"script","profile":"ad_script_v1","summary":analysis.get("summary","") or "脚本评估需要人工复核。","dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":incomplete or confidence<0.6,"human_review_reason":"评分维度缺失或模型置信度偏低" if incomplete or confidence<0.6 else None,"run_summary":{"steps":1,"completed_actions":["single_script_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"text_call":"single_pass"}}
     return {"evaluation_json":json.dumps(payload,ensure_ascii=False),"technical_details":{"text_call":"single_pass","raw_analysis":analysis}}

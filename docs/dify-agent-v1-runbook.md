@@ -1,5 +1,11 @@
 # Dify 受控 Agent V1 运行手册
 
+## 多模态候选补充
+
+`workflow/candidate/AIGC-Multimodal-QA-v1.yml` 是独立候选应用，增加 `video / image / script` 路由。导入时必须新建候选应用，不得覆盖 current 或既有 Agent V1。
+
+最小验证素材位于 `tests/fixtures/multimodal/`。图片与脚本使用固定公开夹具；视频由 `tests/video_fixtures.py` 生成。每次 live run 记录状态、分数、问题数、证据数、人工复核标记、报告标题和原始 JSON 泄漏检查。完整验证状态见 `docs/multimodal-v1-validation.md`。
+
 ## 1. 边界
 
 - 当前固定工作流保持不变；Agent V1 作为独立候选应用验证。

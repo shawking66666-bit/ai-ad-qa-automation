@@ -128,6 +128,13 @@ class MultimodalV1DslTests(unittest.TestCase):
         self.assertEqual(incoming[0]["source"], next(node["id"] for node in self.nodes if node["data"].get("title") == "脚本非空？"))
         self.assertEqual(incoming[0]["sourceHandle"], "true")
 
+    def test_branch_normalizers_emit_renderer_contract_fields(self):
+        for title in ("规范化图片评估", "规范化脚本评估"):
+            node = next(node for node in self.node_data("code") if node["title"] == title)
+            code = node["code"]
+            for field in ("source_type", "dimension", "finding", "priority", "problem", "impact", "suggestion", "expected_effect"):
+                self.assertIn(field, code, f"{title} missing {field}")
+
 
 if __name__ == "__main__":
     unittest.main()
