@@ -10,11 +10,18 @@
 ## 候选版本规则
 
 1. 新功能先在 `candidate/` 中形成独立 DSL，禁止直接修改 `current`。
-2. 文件名使用 `AI-Ad-QA-<功能>-v<版本>.yml`；本次受控 Agent 使用 `AI-Ad-QA-agent-v1.yml`。
+2. 文件名使用 `AI-Ad-QA-<功能>-v<版本>.yml`；受控 Agent 使用 `AI-Ad-QA-agent-v1.yml`，多模态内容质检 V1 使用 `AIGC-Multimodal-QA-v1.yml`。
 3. 候选 DSL 必须完成导入检查、模拟分支测试、真实最小闭环测试和凭据扫描。
 4. 扫描确认不得包含 API Key、密码、Token、Cookie 或本机私密路径；模型凭据只保存在 Dify 的凭据管理中。
 5. 评审通过后，先把原 `current` 复制到带版本和日期的 `archive`，再由用户明确批准是否替换 `current`。
 6. 导入候选应用只用于开发验证，不等于发布，也不得覆盖现有应用。
+
+## 多模态内容质检 V1
+
+- 候选文件：`candidate/AIGC-Multimodal-QA-v1.yml`。
+- 输入按 `asset_type` 路由到视频、图片或脚本分支；三类分支最终都输出统一的结构化评估结果和可读 Markdown 报告。
+- `technical_details` 只用于排障，不进入对外报告正文。
+- 当前 `current/AI-Ad-QA-current.yml` 与既有 `candidate/AI-Ad-QA-agent-v1.yml` 均为受保护基线；多模态候选通过完整验证并获得用户明确批准前，不得替换它们。
 
 ## 更新步骤
 
