@@ -322,4 +322,3 @@ Commit documentation and fixtures with `docs: validate multimodal content qualit
 - Every DSL branch produces the Task 1 contract; Task 2 is the single renderer interface.
 - The five highest-risk input/failure conditions have tests or a live gate.
 - The plan specifies interfaces and assertions without transcribing implementation bodies.
-
