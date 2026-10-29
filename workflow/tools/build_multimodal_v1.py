@@ -134,7 +134,7 @@ def main(state_json, product_context, target_audience, conversion_goal):
             if not str(finding).strip(): continue
             evidence.append({"id":f"video-{len(evidence)+1}","source_type":source_type,"location":f"Agent分析{group_index+1}","dimension":"overall","finding":str(finding),"confidence":float(analysis.get("confidence",0))})
     evidence_ids=[item["id"] for item in evidence]
-    issues=[{"priority":"P1","dimension":"overall","problem":item["finding"],"impact":"该证据可能影响广告表达质量，需结合业务目标复核","evidence_refs":[item["id"]],"suggestion":"围绕该证据调整素材并复核"} for item in evidence]
+    issues=[]
     changes=(state.get("optimization_plan") or {}).get("changes",[]) if isinstance(state.get("optimization_plan"),dict) else []
     suggestions=[{"priority":"P1" if i<2 else "P2","action":str(change),"expected_effect":"提升广告内容表达质量","evidence_refs":evidence_ids} for i,change in enumerate(changes) if str(change).strip()]
     summary="；".join(str(x.get("summary", "")) for x in analyses if isinstance(x,dict) and x.get("summary")) or "视频 Agent 未返回足够的结构化评估证据。"
@@ -203,10 +203,15 @@ def main(analysis, product_context, target_audience, conversion_goal):
         if key not in seen: dims.append({"dimension":key,"label":label,"score":0,"max_score":10,"status":"partial","reason":"模型未返回该维度，需人工复核"})
     evidence=[{"id":f"img-{i+1}","source_type":"image","location":"image:1","dimension":item.get("dimension","overall"),"finding":item.get("finding",""),"confidence":analysis.get("confidence",0)} for i,item in enumerate(analysis.get("evidence",[])) if item.get("finding")]
     evidence_ids=[item["id"] for item in evidence]
+    unsupported_findings=not evidence_ids and bool((analysis.get("issues") or [])+(analysis.get("suggestions") or []))
+    if unsupported_findings: missing.append("issue_evidence")
     issues=[{"priority":"P1","dimension":"overall","problem":text,"impact":"可能降低广告信息传达效果","evidence_refs":evidence_ids,"suggestion":"根据问题调整画面后复核"} for text in analysis.get("issues",[]) if evidence_ids]
     suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"expected_effect":"提升广告信息传达质量","evidence_refs":evidence_ids} for i,text in enumerate(analysis.get("suggestions",[])) if evidence_ids]
     confidence=float(analysis.get("confidence",0)); incomplete=any(x["status"]=="partial" for x in dims)
-    payload={"asset_type":"image","profile":"ad_image_v1","summary":analysis.get("summary","") or "图片评估需要人工复核。","dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":incomplete or confidence<0.6,"human_review_reason":"评分维度缺失或模型置信度偏低" if incomplete or confidence<0.6 else None,"run_summary":{"steps":1,"completed_actions":["single_vision_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"vision_call":"single_pass"}}
+    review=incomplete or confidence<0.6 or unsupported_findings
+    reason="模型返回的问题或建议缺少可引用证据" if unsupported_findings else ("评分维度缺失或模型置信度偏低" if review else None)
+    summary=(analysis.get("summary","") or "图片评估需要人工复核。")+("；模型返回的问题缺少证据，已转人工复核。" if unsupported_findings else "")
+    payload={"asset_type":"image","profile":"ad_image_v1","summary":summary,"dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":review,"human_review_reason":reason,"run_summary":{"steps":1,"completed_actions":["single_vision_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"vision_call":"single_pass"}}
     return {"evaluation_json":json.dumps(payload,ensure_ascii=False),"technical_details":{"vision_call":"single_pass","raw_analysis":analysis}}
 '''
     image_normalizer = base.node("2900000000201", "规范化图片评估", "code", 1530, 920, base.code_data(image_normalize_code, [
@@ -273,10 +278,15 @@ def main(analysis, product_context, target_audience, conversion_goal):
     for i,item in enumerate(analysis.get("evidence",[])):
         if item.get("finding"): evidence.append({"id":f"script-{i+1}","source_type":"text_span","location":str(item.get("location","未定位")),"dimension":str(item.get("dimension","overall")),"finding":str(item.get("finding","")),"confidence":analysis.get("confidence",0)})
     evidence_ids=[item["id"] for item in evidence]
+    unsupported_findings=not evidence_ids and bool((analysis.get("issues") or [])+(analysis.get("suggestions") or []))
+    if unsupported_findings: missing.append("issue_evidence")
     issues=[{"priority":"P1","dimension":"overall","problem":text,"impact":"可能降低脚本表达或转化效果","evidence_refs":evidence_ids,"suggestion":"根据问题改写对应段落后复核"} for text in analysis.get("issues",[]) if evidence_ids]
     suggestions=[{"priority":"P1" if i<2 else "P2","action":text,"expected_effect":"提升脚本表达与转化清晰度","evidence_refs":evidence_ids} for i,text in enumerate(analysis.get("suggestions",[])) if evidence_ids]
     confidence=float(analysis.get("confidence",0)); incomplete=any(x["status"]=="partial" for x in dims)
-    payload={"asset_type":"script","profile":"ad_script_v1","summary":analysis.get("summary","") or "脚本评估需要人工复核。","dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":incomplete or confidence<0.6,"human_review_reason":"评分维度缺失或模型置信度偏低" if incomplete or confidence<0.6 else None,"run_summary":{"steps":1,"completed_actions":["single_script_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"text_call":"single_pass"}}
+    review=incomplete or confidence<0.6 or unsupported_findings
+    reason="模型返回的问题或建议缺少可引用证据" if unsupported_findings else ("评分维度缺失或模型置信度偏低" if review else None)
+    summary=(analysis.get("summary","") or "脚本评估需要人工复核。")+("；模型返回的问题缺少证据，已转人工复核。" if unsupported_findings else "")
+    payload={"asset_type":"script","profile":"ad_script_v1","summary":summary,"dimensions":dims,"evidence":evidence,"issues":issues,"strengths":analysis.get("strengths",[]),"suggestions":suggestions,"missing_information":missing,"confidence":confidence,"human_review_required":review,"human_review_reason":reason,"run_summary":{"steps":1,"completed_actions":["single_script_review"],"supplementary_frames_used":False,"retry_count":0,"stop_reason":"single_pass_completed"},"technical_details":{"text_call":"single_pass"}}
     return {"evaluation_json":json.dumps(payload,ensure_ascii=False),"technical_details":{"text_call":"single_pass","raw_analysis":analysis}}
 '''
     script_normalizer=base.node("2900000000303","规范化脚本评估","code",1830,1100,base.code_data(script_normalize_code,[base.var(["2900000000302","structured_output"],"analysis","object"),base.var(["1900000000001","product_context"],"product_context"),base.var(["1900000000001","target_audience"],"target_audience"),base.var(["1900000000001","conversion_goal"],"conversion_goal")],{"evaluation_json":"string","technical_details":"object"}),height=120)

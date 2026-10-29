@@ -209,6 +209,30 @@ class MultimodalV1DslTests(unittest.TestCase):
         for output in (image, script, video):
             request = EvaluationRequest.model_validate(json.loads(output["evaluation_json"]))
             self.assertTrue(all(item.evidence_refs for item in [*request.issues, *request.suggestions]))
+        video_request = EvaluationRequest.model_validate(json.loads(video["evaluation_json"]))
+        self.assertEqual(video_request.issues, [])
+
+    def test_unsubstantiated_model_issues_require_human_review(self):
+        complete_dimensions = {
+            "image": ["subject", "composition", "readability", "selling_point", "audience", "cta", "risk"],
+            "script": ["hook", "pain_point", "selling_point", "audience", "structure", "cta", "claim_risk"],
+        }
+        for asset_type, title in (("image", "规范化图片评估"), ("script", "规范化脚本评估")):
+            analysis = {
+                "summary": "模型报告存在问题",
+                "dimensions": [{"dimension": key, "score": 8, "reason": "已评估"} for key in complete_dimensions[asset_type]],
+                "evidence": [],
+                "issues": ["行动引导不明确"],
+                "strengths": [],
+                "suggestions": ["增加按钮"],
+                "confidence": 0.9,
+            }
+            output = self.run_code_node(title, analysis=analysis, product_context="水杯", target_audience="通勤人群", conversion_goal="了解更多")
+            request = EvaluationRequest.model_validate(json.loads(output["evaluation_json"]))
+            self.assertTrue(request.human_review_required)
+            self.assertIn("issue_evidence", request.missing_information)
+            self.assertEqual(request.issues, [])
+            self.assertEqual(request.suggestions, [])
 
     def test_renderer_fallbacks_are_complete_evaluation_results(self):
         for title in ("解析报告响应", "解析图片报告", "解析脚本报告"):
