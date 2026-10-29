@@ -86,6 +86,44 @@ class MultimodalV1DslTests(unittest.TestCase):
         )
         self.assertIn("/api/v1/evaluations/render", self.text)
 
+    def test_report_branches_converge_before_one_end(self):
+        ends = self.node_data("end")
+        all_names = [output["variable"] for node in ends for output in node["outputs"]]
+        self.assertEqual(len(all_names), len(set(all_names)), "Dify rejects duplicate End outputs")
+        report_ends = [node for node in ends if "report_markdown" in {item["variable"] for item in node["outputs"]}]
+        self.assertEqual(len(report_ends), 1)
+        aggregators = self.node_data("variable-aggregator")
+        self.assertEqual(len(aggregators), 1)
+        self.assertEqual(aggregators[0]["output_type"], "object")
+        self.assertEqual(len(aggregators[0]["variables"]), 5)
+        aggregator = next(node for node in self.nodes if node["data"]["type"] == "variable-aggregator")
+        packer_ids = {selector[0] for selector in aggregators[0]["variables"]}
+        self.assertEqual({selector[1] for selector in aggregators[0]["variables"]}, {"report_bundle"})
+        self.assertEqual(len(packer_ids), 5)
+        for packer_id in packer_ids:
+            packer = next(node for node in self.nodes if node["id"] == packer_id)
+            self.assertEqual(packer["data"]["type"], "code")
+            self.assertEqual({item["variable"] for item in packer["data"]["variables"]},
+                             {"report_markdown", "evaluation_result", "final_status", "technical_details"})
+            self.assertTrue(any(edge["source"] == packer_id and edge["target"] == aggregator["id"] for edge in self.graph["edges"]))
+        unpack = next(node for node in self.nodes if node["data"].get("title") == "拆分统一报告")
+        self.assertEqual(unpack["data"]["variables"][0]["value_selector"], [aggregator["id"], "output"])
+        self.assertEqual({item["value_selector"][0] for item in report_ends[0]["outputs"]}, {unpack["id"]})
+
+        sample = {
+            "report_markdown": "# Report",
+            "evaluation_result": {"status": "human_review_required"},
+            "final_status": "human_review_required",
+            "technical_details": {"failure_stage": "model"},
+        }
+        packer = next(node for node in self.nodes if node["id"] in packer_ids)
+        namespace = {}
+        exec(packer["data"]["code"], namespace)
+        packed = namespace["main"](**sample)
+        namespace = {}
+        exec(unpack["data"]["code"], namespace)
+        self.assertEqual(namespace["main"](**packed), sample)
+
     def test_public_report_never_interpolates_state_json(self):
         public_templates = [
             node

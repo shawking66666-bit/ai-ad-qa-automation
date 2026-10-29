@@ -77,6 +77,81 @@ def _model_fallback_code(asset_type: str, profile: str, heading: str) -> str:
 '''
 
 
+def _converge_report_ends(nodes: list[dict], edges: list[dict]) -> None:
+    """Give Dify one public report End while preserving exclusive branch results."""
+    report_end_ids = [
+        "2900000000103",  # video
+        "2900000000204",  # image
+        "2900000000206",  # image model fallback
+        "2900000000306",  # script
+        "2900000000308",  # script model fallback
+    ]
+    fields = ["report_markdown", "evaluation_result", "final_status", "technical_details"]
+    kinds = {"report_markdown": "string", "evaluation_result": "object", "final_status": "string", "technical_details": "object"}
+    pack_code = '''def main(report_markdown, evaluation_result, final_status, technical_details):
+    return {"report_bundle": {"report_markdown": report_markdown, "evaluation_result": evaluation_result, "final_status": final_status, "technical_details": technical_details}}
+'''
+    packers = []
+    for index, end_id in enumerate(report_end_ids, 1):
+        old_end = _by_id(nodes, end_id)
+        old_outputs = {item["variable"]: item for item in old_end["data"]["outputs"]}
+        if set(old_outputs) != set(fields):
+            raise ValueError(f"Unexpected report outputs on {end_id}")
+        incoming = [item for item in edges if item["target"] == end_id]
+        if len(incoming) != 1:
+            raise ValueError(f"Expected one incoming report edge on {end_id}")
+        source_edge = incoming[0]
+        packer_id = f"390000000000{index}"
+        packers.append(packer_id)
+        packer = base.node(
+            packer_id,
+            f"打包报告分支 {index}",
+            "code",
+            old_end["position"]["x"],
+            old_end["position"]["y"],
+            base.code_data(
+                pack_code,
+                [base.var(old_outputs[name]["value_selector"], name, kinds[name]) for name in fields],
+                {"report_bundle": "object"},
+            ),
+            height=120,
+        )
+        nodes.append(packer)
+        edges.remove(source_edge)
+        edges.append(base.edge(source_edge["source"], packer_id, source_edge["data"]["sourceType"], "code", source_edge["sourceHandle"]))
+
+    nodes[:] = [item for item in nodes if item["id"] not in report_end_ids]
+    aggregator_id = "3900000000010"
+    unpack_id = "3900000000011"
+    nodes.append(base.node(
+        aggregator_id, "汇聚报告分支", "variable-aggregator", 6750, 700,
+        {"output_type": "object", "variables": [[item, "report_bundle"] for item in packers]},
+        height=160,
+    ))
+    unpack_code = '''def main(report_bundle):
+    required = ("report_markdown", "evaluation_result", "final_status", "technical_details")
+    if not isinstance(report_bundle, dict) or any(key not in report_bundle for key in required):
+        raise ValueError("Incomplete report bundle")
+    return {key: report_bundle[key] for key in required}
+'''
+    nodes.append(base.node(
+        unpack_id, "拆分统一报告", "code", 7050, 700,
+        base.code_data(unpack_code, [base.var([aggregator_id, "output"], "report_bundle", "object")], kinds),
+        height=120,
+    ))
+    nodes.append(base.node(
+        report_end_ids[0], "输出多模态报告", "end", 7350, 700,
+        {"outputs": [
+            {"value_selector": [unpack_id, name], "value_type": kinds[name], "variable": name}
+            for name in fields
+        ]},
+        height=192,
+    ))
+    edges.extend(base.edge(item, aggregator_id, "code", "variable-aggregator") for item in packers)
+    edges.append(base.edge(aggregator_id, unpack_id, "variable-aggregator", "code"))
+    edges.append(base.edge(unpack_id, report_end_ids[0], "code", "end"))
+
+
 def build_dsl() -> dict:
     dsl = _migrate_inherited_start_references(deepcopy(base.dsl))
     graph = dsl["workflow"]["graph"]
@@ -303,6 +378,7 @@ def main(analysis, product_context, target_audience, conversion_goal):
     nodes.extend([script_precheck,script_validator,empty_script,script_llm,script_normalizer,script_renderer,script_parser,script_end,script_fallback,script_fallback_end])
     edges.extend([base.edge("2900000000003","2900000000299","if-else","code","true"),base.edge("2900000000299","2900000000300","code","if-else"),base.edge("2900000000300","2900000000302","if-else","llm","true"),base.edge("2900000000300","2900000000301","if-else","end","false"),base.edge("2900000000302","2900000000303","llm","code"),base.edge("2900000000302","2900000000307","llm","code","fail-branch"),base.edge("2900000000303","2900000000304","code","http-request"),base.edge("2900000000303","2900000000307","code","code","fail-branch"),base.edge("2900000000304","2900000000305","http-request","code"),base.edge("2900000000304","2900000000305","http-request","code","fail-branch"),base.edge("2900000000305","2900000000306","code","end"),base.edge("2900000000307","2900000000308","code","end")])
     dsl["app"].update({"name": "AIGC Multimodal Quality V1 - CANDIDATE", "description": "Portfolio candidate for advertising video, image and script quality evaluation"})
+    _converge_report_ends(nodes, edges)
     return _stabilize_uuid_values(dsl)
 
 

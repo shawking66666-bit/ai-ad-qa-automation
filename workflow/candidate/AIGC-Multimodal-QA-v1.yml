@@ -628,21 +628,6 @@
           "data": {
             "isInIteration": false,
             "isInLoop": false,
-            "sourceType": "code",
-            "targetType": "end"
-          },
-          "id": "2900000000102-source-2900000000103-target",
-          "source": "2900000000102",
-          "sourceHandle": "source",
-          "target": "2900000000103",
-          "targetHandle": "target",
-          "type": "custom",
-          "zIndex": 0
-        },
-        {
-          "data": {
-            "isInIteration": false,
-            "isInLoop": false,
             "sourceType": "if-else",
             "targetType": "llm"
           },
@@ -740,36 +725,6 @@
           "source": "2900000000202",
           "sourceHandle": "fail-branch",
           "target": "2900000000203",
-          "targetHandle": "target",
-          "type": "custom",
-          "zIndex": 0
-        },
-        {
-          "data": {
-            "isInIteration": false,
-            "isInLoop": false,
-            "sourceType": "code",
-            "targetType": "end"
-          },
-          "id": "2900000000203-source-2900000000204-target",
-          "source": "2900000000203",
-          "sourceHandle": "source",
-          "target": "2900000000204",
-          "targetHandle": "target",
-          "type": "custom",
-          "zIndex": 0
-        },
-        {
-          "data": {
-            "isInIteration": false,
-            "isInLoop": false,
-            "sourceType": "code",
-            "targetType": "end"
-          },
-          "id": "2900000000205-source-2900000000206-target",
-          "source": "2900000000205",
-          "sourceHandle": "source",
-          "target": "2900000000206",
           "targetHandle": "target",
           "type": "custom",
           "zIndex": 0
@@ -929,12 +884,162 @@
             "isInIteration": false,
             "isInLoop": false,
             "sourceType": "code",
-            "targetType": "end"
+            "targetType": "code"
           },
-          "id": "2900000000305-source-2900000000306-target",
+          "id": "2900000000102-source-3900000000001-target",
+          "source": "2900000000102",
+          "sourceHandle": "source",
+          "target": "3900000000001",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "code"
+          },
+          "id": "2900000000203-source-3900000000002-target",
+          "source": "2900000000203",
+          "sourceHandle": "source",
+          "target": "3900000000002",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "code"
+          },
+          "id": "2900000000205-source-3900000000003-target",
+          "source": "2900000000205",
+          "sourceHandle": "source",
+          "target": "3900000000003",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "code"
+          },
+          "id": "2900000000305-source-3900000000004-target",
           "source": "2900000000305",
           "sourceHandle": "source",
-          "target": "2900000000306",
+          "target": "3900000000004",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "code"
+          },
+          "id": "2900000000307-source-3900000000005-target",
+          "source": "2900000000307",
+          "sourceHandle": "source",
+          "target": "3900000000005",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "variable-aggregator"
+          },
+          "id": "3900000000001-source-3900000000010-target",
+          "source": "3900000000001",
+          "sourceHandle": "source",
+          "target": "3900000000010",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "variable-aggregator"
+          },
+          "id": "3900000000002-source-3900000000010-target",
+          "source": "3900000000002",
+          "sourceHandle": "source",
+          "target": "3900000000010",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "variable-aggregator"
+          },
+          "id": "3900000000003-source-3900000000010-target",
+          "source": "3900000000003",
+          "sourceHandle": "source",
+          "target": "3900000000010",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "variable-aggregator"
+          },
+          "id": "3900000000004-source-3900000000010-target",
+          "source": "3900000000004",
+          "sourceHandle": "source",
+          "target": "3900000000010",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "code",
+            "targetType": "variable-aggregator"
+          },
+          "id": "3900000000005-source-3900000000010-target",
+          "source": "3900000000005",
+          "sourceHandle": "source",
+          "target": "3900000000010",
+          "targetHandle": "target",
+          "type": "custom",
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "isInIteration": false,
+            "isInLoop": false,
+            "sourceType": "variable-aggregator",
+            "targetType": "code"
+          },
+          "id": "3900000000010-source-3900000000011-target",
+          "source": "3900000000010",
+          "sourceHandle": "source",
+          "target": "3900000000011",
           "targetHandle": "target",
           "type": "custom",
           "zIndex": 0
@@ -946,10 +1051,10 @@
             "sourceType": "code",
             "targetType": "end"
           },
-          "id": "2900000000307-source-2900000000308-target",
-          "source": "2900000000307",
+          "id": "3900000000011-source-2900000000103-target",
+          "source": "3900000000011",
           "sourceHandle": "source",
-          "target": "2900000000308",
+          "target": "2900000000103",
           "targetHandle": "target",
           "type": "custom",
           "zIndex": 0
@@ -3174,62 +3279,6 @@
         },
         {
           "data": {
-            "title": "输出多模态报告",
-            "type": "end",
-            "selected": false,
-            "outputs": [
-              {
-                "value_selector": [
-                  "2900000000102",
-                  "report_markdown"
-                ],
-                "value_type": "string",
-                "variable": "report_markdown"
-              },
-              {
-                "value_selector": [
-                  "2900000000102",
-                  "evaluation_result"
-                ],
-                "value_type": "object",
-                "variable": "evaluation_result"
-              },
-              {
-                "value_selector": [
-                  "2900000000102",
-                  "final_status"
-                ],
-                "value_type": "string",
-                "variable": "final_status"
-              },
-              {
-                "value_selector": [
-                  "2900000000102",
-                  "technical_details"
-                ],
-                "value_type": "object",
-                "variable": "technical_details"
-              }
-            ]
-          },
-          "height": 192,
-          "id": "2900000000103",
-          "position": {
-            "x": 6420,
-            "y": 360
-          },
-          "positionAbsolute": {
-            "x": 6420,
-            "y": 360
-          },
-          "sourcePosition": "right",
-          "targetPosition": "left",
-          "type": "custom",
-          "width": 242,
-          "zIndex": 0
-        },
-        {
-          "data": {
             "title": "评估广告图片",
             "type": "llm",
             "selected": false,
@@ -3247,12 +3296,12 @@
             },
             "prompt_template": [
               {
-                "id": "2e5cd8c8-46bc-54f0-835c-fd40c7e438b3",
+                "id": "7e563c61-c6de-593b-a474-d206e4fe9b66",
                 "role": "system",
                 "text": "你是广告图片质量审核员。只根据实际图片和用户提供的上下文判断，不得猜测不可见信息。逐项评估 subject、composition、readability、selling_point、audience、cta、risk；证据必须是人能在图中复核的具体描述。"
               },
               {
-                "id": "699e6d01-521c-5f0f-b7d8-48a6a76adb3d",
+                "id": "810f7463-c3ef-58ef-b621-a7ca87329e48",
                 "role": "user",
                 "text": "profile: ad_image_v1\n产品信息：{{#1900000000001.product_context#}}\n目标受众：{{#1900000000001.target_audience#}}\n转化目标：{{#1900000000001.conversion_goal#}}\n补充要求：{{#1900000000001.additional_requirements#}}"
               }
@@ -3586,62 +3635,6 @@
         },
         {
           "data": {
-            "title": "输出图片报告",
-            "type": "end",
-            "selected": false,
-            "outputs": [
-              {
-                "value_selector": [
-                  "2900000000203",
-                  "report_markdown"
-                ],
-                "value_type": "string",
-                "variable": "report_markdown"
-              },
-              {
-                "value_selector": [
-                  "2900000000203",
-                  "evaluation_result"
-                ],
-                "value_type": "object",
-                "variable": "evaluation_result"
-              },
-              {
-                "value_selector": [
-                  "2900000000203",
-                  "final_status"
-                ],
-                "value_type": "string",
-                "variable": "final_status"
-              },
-              {
-                "value_selector": [
-                  "2900000000203",
-                  "technical_details"
-                ],
-                "value_type": "object",
-                "variable": "technical_details"
-              }
-            ]
-          },
-          "height": 192,
-          "id": "2900000000204",
-          "position": {
-            "x": 2430,
-            "y": 920
-          },
-          "positionAbsolute": {
-            "x": 2430,
-            "y": 920
-          },
-          "sourcePosition": "right",
-          "targetPosition": "left",
-          "type": "custom",
-          "width": 242,
-          "zIndex": 0
-        },
-        {
-          "data": {
             "title": "图片分析失败转人工复核",
             "type": "code",
             "selected": false,
@@ -3675,62 +3668,6 @@
           },
           "positionAbsolute": {
             "x": 1830,
-            "y": 1040
-          },
-          "sourcePosition": "right",
-          "targetPosition": "left",
-          "type": "custom",
-          "width": 242,
-          "zIndex": 0
-        },
-        {
-          "data": {
-            "title": "输出图片人工复核结果",
-            "type": "end",
-            "selected": false,
-            "outputs": [
-              {
-                "value_selector": [
-                  "2900000000205",
-                  "report_markdown"
-                ],
-                "value_type": "string",
-                "variable": "report_markdown"
-              },
-              {
-                "value_selector": [
-                  "2900000000205",
-                  "evaluation_result"
-                ],
-                "value_type": "object",
-                "variable": "evaluation_result"
-              },
-              {
-                "value_selector": [
-                  "2900000000205",
-                  "final_status"
-                ],
-                "value_type": "string",
-                "variable": "final_status"
-              },
-              {
-                "value_selector": [
-                  "2900000000205",
-                  "technical_details"
-                ],
-                "value_type": "object",
-                "variable": "technical_details"
-              }
-            ]
-          },
-          "height": 192,
-          "id": "2900000000206",
-          "position": {
-            "x": 2130,
-            "y": 1040
-          },
-          "positionAbsolute": {
-            "x": 2130,
             "y": 1040
           },
           "sourcePosition": "right",
@@ -3796,7 +3733,7 @@
                 "conditions": [
                   {
                     "comparison_operator": "is",
-                    "id": "6a2e9b44-b096-5dd0-a4d3-a5f256838fd0",
+                    "id": "1dd65f9a-8c12-573b-b90b-c9b38b92dff3",
                     "value": true,
                     "varType": "boolean",
                     "variable_selector": [
@@ -3875,12 +3812,12 @@
             },
             "prompt_template": [
               {
-                "id": "3e177b8a-f931-5050-bb8c-e5a57846d516",
+                "id": "5f7d4d96-7dc6-5959-9a51-86e1558f9144",
                 "role": "system",
                 "text": "你是广告脚本质量审核员。只根据原文和提供的业务上下文判断，不得补写原文没有的事实。逐项评估 hook、pain_point、selling_point、audience、structure、cta、claim_risk。每条证据必须使用段落编号或场景编号作为 location，便于人工回看。"
               },
               {
-                "id": "6ebc8f43-359b-58d5-8bb4-be7ccc15f5ea",
+                "id": "b45c1991-c9d2-57ca-8884-7377c0707a29",
                 "role": "user",
                 "text": "profile: ad_script_v1\n脚本原文：{{#2900000000299.normalized_script#}}\n产品信息：{{#1900000000001.product_context#}}\n目标受众：{{#1900000000001.target_audience#}}\n转化目标：{{#1900000000001.conversion_goal#}}\n补充要求：{{#1900000000001.additional_requirements#}}"
               }
@@ -4212,62 +4149,6 @@
         },
         {
           "data": {
-            "title": "输出脚本报告",
-            "type": "end",
-            "selected": false,
-            "outputs": [
-              {
-                "value_selector": [
-                  "2900000000305",
-                  "report_markdown"
-                ],
-                "value_type": "string",
-                "variable": "report_markdown"
-              },
-              {
-                "value_selector": [
-                  "2900000000305",
-                  "evaluation_result"
-                ],
-                "value_type": "object",
-                "variable": "evaluation_result"
-              },
-              {
-                "value_selector": [
-                  "2900000000305",
-                  "final_status"
-                ],
-                "value_type": "string",
-                "variable": "final_status"
-              },
-              {
-                "value_selector": [
-                  "2900000000305",
-                  "technical_details"
-                ],
-                "value_type": "object",
-                "variable": "technical_details"
-              }
-            ]
-          },
-          "height": 192,
-          "id": "2900000000306",
-          "position": {
-            "x": 2730,
-            "y": 1100
-          },
-          "positionAbsolute": {
-            "x": 2730,
-            "y": 1100
-          },
-          "sourcePosition": "right",
-          "targetPosition": "left",
-          "type": "custom",
-          "width": 242,
-          "zIndex": 0
-        },
-        {
-          "data": {
             "title": "脚本分析失败转人工复核",
             "type": "code",
             "selected": false,
@@ -4311,10 +4192,268 @@
         },
         {
           "data": {
-            "title": "输出脚本人工复核结果",
-            "type": "end",
+            "title": "打包报告分支 1",
+            "type": "code",
             "selected": false,
-            "outputs": [
+            "code": "def main(report_markdown, evaluation_result, final_status, technical_details):\n    return {\"report_bundle\": {\"report_markdown\": report_markdown, \"evaluation_result\": evaluation_result, \"final_status\": final_status, \"technical_details\": technical_details}}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "2900000000102",
+                  "report_markdown"
+                ],
+                "value_type": "string",
+                "variable": "report_markdown"
+              },
+              {
+                "value_selector": [
+                  "2900000000102",
+                  "evaluation_result"
+                ],
+                "value_type": "object",
+                "variable": "evaluation_result"
+              },
+              {
+                "value_selector": [
+                  "2900000000102",
+                  "final_status"
+                ],
+                "value_type": "string",
+                "variable": "final_status"
+              },
+              {
+                "value_selector": [
+                  "2900000000102",
+                  "technical_details"
+                ],
+                "value_type": "object",
+                "variable": "technical_details"
+              }
+            ],
+            "outputs": {
+              "report_bundle": {
+                "children": null,
+                "type": "object"
+              }
+            }
+          },
+          "height": 120,
+          "id": "3900000000001",
+          "position": {
+            "x": 6420,
+            "y": 360
+          },
+          "positionAbsolute": {
+            "x": 6420,
+            "y": 360
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "打包报告分支 2",
+            "type": "code",
+            "selected": false,
+            "code": "def main(report_markdown, evaluation_result, final_status, technical_details):\n    return {\"report_bundle\": {\"report_markdown\": report_markdown, \"evaluation_result\": evaluation_result, \"final_status\": final_status, \"technical_details\": technical_details}}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "2900000000203",
+                  "report_markdown"
+                ],
+                "value_type": "string",
+                "variable": "report_markdown"
+              },
+              {
+                "value_selector": [
+                  "2900000000203",
+                  "evaluation_result"
+                ],
+                "value_type": "object",
+                "variable": "evaluation_result"
+              },
+              {
+                "value_selector": [
+                  "2900000000203",
+                  "final_status"
+                ],
+                "value_type": "string",
+                "variable": "final_status"
+              },
+              {
+                "value_selector": [
+                  "2900000000203",
+                  "technical_details"
+                ],
+                "value_type": "object",
+                "variable": "technical_details"
+              }
+            ],
+            "outputs": {
+              "report_bundle": {
+                "children": null,
+                "type": "object"
+              }
+            }
+          },
+          "height": 120,
+          "id": "3900000000002",
+          "position": {
+            "x": 2430,
+            "y": 920
+          },
+          "positionAbsolute": {
+            "x": 2430,
+            "y": 920
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "打包报告分支 3",
+            "type": "code",
+            "selected": false,
+            "code": "def main(report_markdown, evaluation_result, final_status, technical_details):\n    return {\"report_bundle\": {\"report_markdown\": report_markdown, \"evaluation_result\": evaluation_result, \"final_status\": final_status, \"technical_details\": technical_details}}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "2900000000205",
+                  "report_markdown"
+                ],
+                "value_type": "string",
+                "variable": "report_markdown"
+              },
+              {
+                "value_selector": [
+                  "2900000000205",
+                  "evaluation_result"
+                ],
+                "value_type": "object",
+                "variable": "evaluation_result"
+              },
+              {
+                "value_selector": [
+                  "2900000000205",
+                  "final_status"
+                ],
+                "value_type": "string",
+                "variable": "final_status"
+              },
+              {
+                "value_selector": [
+                  "2900000000205",
+                  "technical_details"
+                ],
+                "value_type": "object",
+                "variable": "technical_details"
+              }
+            ],
+            "outputs": {
+              "report_bundle": {
+                "children": null,
+                "type": "object"
+              }
+            }
+          },
+          "height": 120,
+          "id": "3900000000003",
+          "position": {
+            "x": 2130,
+            "y": 1040
+          },
+          "positionAbsolute": {
+            "x": 2130,
+            "y": 1040
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "打包报告分支 4",
+            "type": "code",
+            "selected": false,
+            "code": "def main(report_markdown, evaluation_result, final_status, technical_details):\n    return {\"report_bundle\": {\"report_markdown\": report_markdown, \"evaluation_result\": evaluation_result, \"final_status\": final_status, \"technical_details\": technical_details}}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "2900000000305",
+                  "report_markdown"
+                ],
+                "value_type": "string",
+                "variable": "report_markdown"
+              },
+              {
+                "value_selector": [
+                  "2900000000305",
+                  "evaluation_result"
+                ],
+                "value_type": "object",
+                "variable": "evaluation_result"
+              },
+              {
+                "value_selector": [
+                  "2900000000305",
+                  "final_status"
+                ],
+                "value_type": "string",
+                "variable": "final_status"
+              },
+              {
+                "value_selector": [
+                  "2900000000305",
+                  "technical_details"
+                ],
+                "value_type": "object",
+                "variable": "technical_details"
+              }
+            ],
+            "outputs": {
+              "report_bundle": {
+                "children": null,
+                "type": "object"
+              }
+            }
+          },
+          "height": 120,
+          "id": "3900000000004",
+          "position": {
+            "x": 2730,
+            "y": 1100
+          },
+          "positionAbsolute": {
+            "x": 2730,
+            "y": 1100
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "打包报告分支 5",
+            "type": "code",
+            "selected": false,
+            "code": "def main(report_markdown, evaluation_result, final_status, technical_details):\n    return {\"report_bundle\": {\"report_markdown\": report_markdown, \"evaluation_result\": evaluation_result, \"final_status\": final_status, \"technical_details\": technical_details}}\n",
+            "code_language": "python3",
+            "variables": [
               {
                 "value_selector": [
                   "2900000000307",
@@ -4347,10 +4486,16 @@
                 "value_type": "object",
                 "variable": "technical_details"
               }
-            ]
+            ],
+            "outputs": {
+              "report_bundle": {
+                "children": null,
+                "type": "object"
+              }
+            }
           },
-          "height": 192,
-          "id": "2900000000308",
+          "height": 120,
+          "id": "3900000000005",
           "position": {
             "x": 2430,
             "y": 1240
@@ -4358,6 +4503,159 @@
           "positionAbsolute": {
             "x": 2430,
             "y": 1240
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "汇聚报告分支",
+            "type": "variable-aggregator",
+            "selected": false,
+            "output_type": "object",
+            "variables": [
+              [
+                "3900000000001",
+                "report_bundle"
+              ],
+              [
+                "3900000000002",
+                "report_bundle"
+              ],
+              [
+                "3900000000003",
+                "report_bundle"
+              ],
+              [
+                "3900000000004",
+                "report_bundle"
+              ],
+              [
+                "3900000000005",
+                "report_bundle"
+              ]
+            ]
+          },
+          "height": 160,
+          "id": "3900000000010",
+          "position": {
+            "x": 6750,
+            "y": 700
+          },
+          "positionAbsolute": {
+            "x": 6750,
+            "y": 700
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "拆分统一报告",
+            "type": "code",
+            "selected": false,
+            "code": "def main(report_bundle):\n    required = (\"report_markdown\", \"evaluation_result\", \"final_status\", \"technical_details\")\n    if not isinstance(report_bundle, dict) or any(key not in report_bundle for key in required):\n        raise ValueError(\"Incomplete report bundle\")\n    return {key: report_bundle[key] for key in required}\n",
+            "code_language": "python3",
+            "variables": [
+              {
+                "value_selector": [
+                  "3900000000010",
+                  "output"
+                ],
+                "value_type": "object",
+                "variable": "report_bundle"
+              }
+            ],
+            "outputs": {
+              "report_markdown": {
+                "children": null,
+                "type": "string"
+              },
+              "evaluation_result": {
+                "children": null,
+                "type": "object"
+              },
+              "final_status": {
+                "children": null,
+                "type": "string"
+              },
+              "technical_details": {
+                "children": null,
+                "type": "object"
+              }
+            }
+          },
+          "height": 120,
+          "id": "3900000000011",
+          "position": {
+            "x": 7050,
+            "y": 700
+          },
+          "positionAbsolute": {
+            "x": 7050,
+            "y": 700
+          },
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "type": "custom",
+          "width": 242,
+          "zIndex": 0
+        },
+        {
+          "data": {
+            "title": "输出多模态报告",
+            "type": "end",
+            "selected": false,
+            "outputs": [
+              {
+                "value_selector": [
+                  "3900000000011",
+                  "report_markdown"
+                ],
+                "value_type": "string",
+                "variable": "report_markdown"
+              },
+              {
+                "value_selector": [
+                  "3900000000011",
+                  "evaluation_result"
+                ],
+                "value_type": "object",
+                "variable": "evaluation_result"
+              },
+              {
+                "value_selector": [
+                  "3900000000011",
+                  "final_status"
+                ],
+                "value_type": "string",
+                "variable": "final_status"
+              },
+              {
+                "value_selector": [
+                  "3900000000011",
+                  "technical_details"
+                ],
+                "value_type": "object",
+                "variable": "technical_details"
+              }
+            ]
+          },
+          "height": 192,
+          "id": "2900000000103",
+          "position": {
+            "x": 7350,
+            "y": 700
+          },
+          "positionAbsolute": {
+            "x": 7350,
+            "y": 700
           },
           "sourcePosition": "right",
           "targetPosition": "left",

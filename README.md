@@ -9,7 +9,7 @@
 - 公开测试素材：`tests/fixtures/multimodal/`
 - 验证边界：`docs/multimodal-v1-validation.md`
 
-该版本不会自动替换 current。当前状态为自动化测试和本地 FastAPI 报告接口已验证，Dify 三素材端到端 live run 尚未完成。
+该版本不会自动替换 current。首版候选 DSL 导入 Dify 后发现多个 End 节点的输出变量重名；候选生成器已改为单一报告 End。修复后的 DSL 仍需重新导入并检查发布清单。自动化测试和本地 FastAPI 报告接口已验证，Dify 三素材端到端 live run 尚未完成。
 
 Local FastAPI service used by the Dify workflow to extract fixed-time JPEG
 frames from uploaded MP4 and MOV advertising videos.
