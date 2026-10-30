@@ -9,6 +9,8 @@ def _review_label(result: EvaluationResult) -> str:
 
 def render_markdown(result: EvaluationResult) -> str:
     evidence_by_id = {item.id: item for item in result.evidence}
+    has_evaluated_dimension = any(item.status == "evaluated" for item in result.dimensions)
+    overall_score_label = f"{result.overall_score}/100" if has_evaluated_dimension else "未评分"
     lines = [
         "# AIGC 内容质量评估报告",
         "",
@@ -16,7 +18,7 @@ def render_markdown(result: EvaluationResult) -> str:
         "",
         f"- 内容类型：{result.asset_type}",
         f"- 评估模板：{result.profile}",
-        f"- 综合评分：{result.overall_score}/100",
+        f"- 综合评分：{overall_score_label}",
         f"- 运行状态：{result.status}",
         f"- 人工复核：{_review_label(result)}",
         f"- 结论：{result.summary}",
@@ -47,6 +49,8 @@ def render_markdown(result: EvaluationResult) -> str:
     for dimension in result.dimensions:
         if dimension.status == "not_applicable":
             lines.append(f"- {dimension.label}：不适用（{dimension.reason}）")
+        elif dimension.status == "partial":
+            lines.append(f"- {dimension.label}：未评分（{dimension.reason}）")
         else:
             lines.append(
                 f"- {dimension.label}：{dimension.score:g}/{dimension.max_score:g}"

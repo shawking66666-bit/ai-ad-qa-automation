@@ -13,6 +13,13 @@ from video_processor.evaluation import (
 
 
 class EvaluationContractTests(unittest.TestCase):
+    def test_calculate_overall_score_excludes_partial_dimensions(self):
+        dimensions = [
+            DimensionScore(dimension="hook", label="开场", score=0, status="partial", reason="未评分"),
+            DimensionScore(dimension="cta", label="行动引导", score=8, status="evaluated", reason="清晰"),
+        ]
+        self.assertEqual(calculate_overall_score(dimensions), 80)
+
     def test_calculate_overall_score_uses_equal_weight_for_evaluated_dimensions(self):
         dimensions = [
             DimensionScore(

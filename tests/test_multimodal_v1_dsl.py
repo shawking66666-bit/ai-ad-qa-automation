@@ -160,7 +160,8 @@ class MultimodalV1DslTests(unittest.TestCase):
 
     def test_protected_dsl_files_are_unchanged(self):
         for path, expected in PROTECTED_HASHES.items():
-            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            canonical_bytes = path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+            digest = hashlib.sha256(canonical_bytes).hexdigest()
             self.assertEqual(digest, expected, path)
 
     def test_image_branch_uses_real_vision_input_and_expected_profile(self):

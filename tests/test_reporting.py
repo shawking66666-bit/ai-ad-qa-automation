@@ -93,6 +93,18 @@ class MarkdownReportTests(unittest.TestCase):
         self.assertNotIn("secret-debug-state", report)
         self.assertNotIn("```json", report)
 
+    def test_render_marks_partial_dimensions_as_unscored(self):
+        request = EvaluationRequest(
+            asset_type="video", profile="ad_video_v1", summary="已提取画面证据",
+            dimensions=[DimensionScore(dimension="hook", label="开场钩子", score=0,
+                                       status="partial", reason="尚未生成评分")],
+            confidence=0.9, human_review_required=True,
+        )
+        report = render_markdown(normalize_evaluation(request))
+        self.assertIn("综合评分：未评分", report)
+        self.assertIn("开场钩子：未评分", report)
+        self.assertNotIn("综合评分：0/100", report)
+
 
 if __name__ == "__main__":
     unittest.main()

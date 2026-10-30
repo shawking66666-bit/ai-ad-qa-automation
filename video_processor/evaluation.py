@@ -104,7 +104,7 @@ class EvaluationResult(BaseModel):
 
 
 def calculate_overall_score(dimensions: list[DimensionScore]) -> int:
-    applicable = [item for item in dimensions if item.status != "not_applicable"]
+    applicable = [item for item in dimensions if item.status == "evaluated"]
     if not applicable:
         return 0
     percentages = [item.score / item.max_score * 100 for item in applicable]
