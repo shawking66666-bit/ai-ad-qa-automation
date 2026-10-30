@@ -10,6 +10,7 @@ This project provides the local FastAPI video processor used by the Dify
 - `video_processor/`: FastAPI application and FFmpeg adapter.
 - `tests/`: unit and integration tests.
 - `workflow/`: exported Dify DSL files; never edit a current DSL in place.
+- `demo/`: localhost-only portfolio page and its Dify Service API adapter; static assets live in `demo/static/`. Keep runtime uploads out of this directory.
 - `docs/`: design notes, plans, and operating instructions.
 - `.venv/`: project-local Python environment; never commit it.
 - Runtime media: `E:\AI\Data\AI-Ad-QA\video_processor_data`.
@@ -19,6 +20,7 @@ This project provides the local FastAPI video processor used by the Dify
 
 - Never store API keys, tokens, passwords, uploaded videos, or extracted
   frames in Git.
+- The demo reads `DIFY_DEMO_API_KEY` only from its process environment. Never echo it, expose it in browser responses, or write it to `.env` or logs. Bind the demo to `127.0.0.1:8001` only; accept no user-provided upstream URL.
 - Do not modify global Python, Conda environments, system PATH, Docker
   settings, or Windows Firewall from this project.
 - Bind FastAPI to `0.0.0.0:8000` only because Docker Desktop must reach it.
