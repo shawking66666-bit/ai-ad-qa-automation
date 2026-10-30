@@ -1,15 +1,26 @@
 # AI Ad QA Video Processor
 
-## AIGC 多模态内容质检 V1（候选）
+## AIGC 多模态内容质检 V1
 
-当前功能分支新增一个作品集级候选工作流，统一审核广告视频、广告图片和广告脚本，并输出结构化评分、可追溯证据、问题清单、优化建议和人类可读 Markdown 报告。
+本项目包含本地 Dify 工作流、视频处理服务和作品集演示页。工作流按视频、图片、脚本三类素材路由，输出结构化评估和人类可读 Markdown 报告。演示页只展示报告及最终状态，不展示排障 JSON。
+
+### 本地演示页
+
+1. 启动 Docker Desktop 和本地 Dify，确认多模态质检工作流已发布。
+2. 双击 `启动FastAPI.cmd`，确认 `http://localhost:8000/health` 正常。
+3. 双击 `启动演示页.cmd`，在弹出的终端中输入该 Dify 工作流的 **应用 API Key**。输入不回显；密钥仅保存在当前演示服务进程的环境变量中。不要把密钥写进仓库、`.env` 或浏览器。
+4. 打开 `http://127.0.0.1:8001`，选择视频、图片或脚本提交素材。关闭演示页终端即可结束服务。
+
+演示服务仅监听本机 `127.0.0.1:8001`。`localhost` 地址不能直接分享给其他电脑；别人可克隆仓库，在自己的 Dify 中导入 DSL、配置模型和应用 API Key 后本地运行。视频最大 50 MB，图片最大 10 MB；脚本直接输入文字。视频运行可能较久，页面会显示等待时间。
+
+首次运行需要本项目 `.venv` 已由 `启动FastAPI.cmd` 创建。演示页只负责呈现，不改变现有 Dify DSL 或视频处理 API。
 
 - 候选 DSL：`workflow/candidate/AIGC-Multimodal-QA-v1.yml`
 - 确定性生成器：`workflow/tools/build_multimodal_v1.py`
 - 公开测试素材：`tests/fixtures/multimodal/`
 - 验证边界：`docs/multimodal-v1-validation.md`
 
-该版本不会自动替换 current。首版候选 DSL 导入 Dify 后发现多个 End 节点的输出变量重名；候选生成器已改为单一报告 End。修复后的 DSL 仍需重新导入并检查发布清单。自动化测试和本地 FastAPI 报告接口已验证，Dify 三素材端到端 live run 尚未完成。
+当前 `workflow/current/` 与多模态候选 DSL 分开管理；Dify 中的发布状态和各素材实测记录见 `docs/multimodal-v1-validation.md`。本地演示页的模拟接口测试不等同于三类素材通过演示页的真实端到端测试。
 
 Local FastAPI service used by the Dify workflow to extract fixed-time JPEG
 frames from uploaded MP4 and MOV advertising videos.

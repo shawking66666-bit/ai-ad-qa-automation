@@ -96,6 +96,19 @@ class DemoApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 502)
         self.assertNotIn("state_json", response.text)
 
+    def test_page_and_assets_load_without_technical_outputs_or_unsafe_html(self):
+        page = self.client.get("/")
+        script = self.client.get("/static/app.js")
+        style = self.client.get("/static/style.css")
+        self.assertEqual(page.status_code, 200)
+        self.assertEqual(script.status_code, 200)
+        self.assertEqual(style.status_code, 200)
+        self.assertIn("AIGC 广告素材质检", page.text)
+        self.assertIn("textContent", script.text)
+        self.assertNotIn("innerHTML", script.text)
+        self.assertNotIn("technical_details", page.text + script.text)
+        self.assertNotIn("DIFY_DEMO_API_KEY", page.text + script.text)
+
 
 if __name__ == "__main__":
     unittest.main()

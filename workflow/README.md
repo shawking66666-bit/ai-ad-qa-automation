@@ -22,6 +22,7 @@
 - 输入按 `asset_type` 路由到视频、图片或脚本分支；三类分支最终都输出统一的结构化评估结果和可读 Markdown 报告。
 - `technical_details` 只用于排障，不进入对外报告正文。
 - 当前 `current/AI-Ad-QA-current.yml` 与既有 `candidate/AI-Ad-QA-agent-v1.yml` 均为受保护基线；多模态候选通过完整验证并获得用户明确批准前，不得替换它们。
+- 本地作品集演示页见项目根目录 `README.md`。它通过已发布工作流的 Dify Service API 运行，并只显示 `report_markdown` 与 `final_status`；导入、发布、Git 更新都不会自动同步到该页面。
 
 ## 更新步骤
 

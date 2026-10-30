@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>AIGC 广告素材质检 · 本地演示</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">A</span><span>AIGC 广告素材质检</span></div>
+    <span class="local-tag"><span class="local-dot" aria-hidden="true"></span>本地演示</span>
+  </header>
+
+  <main class="workspace">
+    <section class="input-panel" aria-labelledby="input-heading">
+      <div class="panel-heading">
+        <h1 id="input-heading">提交素材</h1>
+        <p>选择广告素材，获取可追溯的质量评估报告。</p>
+      </div>
+
+      <form id="evaluation-form">
+        <input type="hidden" name="asset_type" id="asset-type" value="video">
+        <div class="field-group">
+          <span class="field-label">素材类型</span>
+          <div class="type-tabs" role="tablist" aria-label="素材类型">
+            <button type="button" class="type-tab is-active" role="tab" aria-selected="true" data-type="video">视频</button>
+            <button type="button" class="type-tab" role="tab" aria-selected="false" data-type="image">图片</button>
+            <button type="button" class="type-tab" role="tab" aria-selected="false" data-type="script">脚本</button>
+          </div>
+        </div>
+
+        <div id="video-field" class="asset-field">
+          <label class="upload-box" for="video-input">
+            <span class="upload-icon" aria-hidden="true">↑</span>
+            <strong>点击上传广告视频</strong>
+            <span>MP4 或 MOV，最大 50 MB</span>
+            <span class="file-name" id="video-name"></span>
+          </label>
+          <input class="file-input" id="video-input" name="video" type="file" accept=".mp4,.mov,video/mp4,video/quicktime">
+        </div>
+
+        <div id="image-field" class="asset-field" hidden>
+          <label class="upload-box" for="image-input">
+            <span class="upload-icon" aria-hidden="true">↑</span>
+            <strong>点击上传广告图片</strong>
+            <span>JPG、PNG 或 WEBP，最大 10 MB</span>
+            <span class="file-name" id="image-name"></span>
+          </label>
+          <input class="file-input" id="image-input" name="image" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+        </div>
+
+        <div id="script-field" class="asset-field" hidden>
+          <label class="field-label" for="script-input">广告脚本</label>
+          <textarea id="script-input" name="script" rows="5" placeholder="粘贴广告文案、口播或分镜脚本"></textarea>
+        </div>
+
+        <div class="divider"></div>
+
+        <label class="field-label" for="product-context">产品信息</label>
+        <textarea id="product-context" name="product_context" rows="2" placeholder="产品名称、卖点与已核实的信息"></textarea>
+
+        <label class="field-label" for="target-audience">目标受众</label>
+        <input id="target-audience" name="target_audience" type="text" placeholder="例如：城市通勤人群">
+
+        <label class="field-label" for="conversion-goal">转化目标</label>
+        <input id="conversion-goal" name="conversion_goal" type="text" placeholder="例如：促进点击与购买">
+
+        <label class="field-label" for="additional-requirements">补充要求 <span class="optional">可选</span></label>
+        <textarea id="additional-requirements" name="additional_requirements" rows="2" placeholder="需要特别关注的审核点"></textarea>
+
+        <button class="submit-button" id="submit-button" type="submit">开始质检 <span aria-hidden="true">→</span></button>
+        <p class="form-note">结果由 AI 辅助生成；缺少证据或评分时会标记人工复核。</p>
+      </form>
+    </section>
+
+    <section class="report-panel" aria-labelledby="report-heading">
+      <div class="report-topline">
+        <div>
+          <h2 id="report-heading">质检报告</h2>
+          <p>报告只展示可读结论和建议。</p>
+        </div>
+        <span id="result-status" class="result-status" hidden></span>
+      </div>
+
+      <div id="empty-state" class="empty-state">
+        <div class="empty-symbol" aria-hidden="true">◎</div>
+        <h3>等待提交素材</h3>
+        <p>选择左侧素材并填写必要信息，运行后在这里查看完整报告。</p>
+        <div class="flow-steps" aria-label="处理步骤"><span>上传素材</span><i></i><span>AI 质检</span><i></i><span>可读报告</span></div>
+      </div>
+
+      <div id="loading-state" class="loading-state" role="status" aria-live="polite" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <div><strong>正在质检素材</strong><p>视频分析通常需要一些时间，请保持页面打开。已等待 <span id="elapsed-time">0</span> 秒。</p></div>
+      </div>
+
+      <div id="error-state" class="error-state" role="alert" hidden></div>
+      <article id="report-content" class="report-content" aria-live="polite" hidden></article>
+    </section>
+  </main>
+</body>
+</html>

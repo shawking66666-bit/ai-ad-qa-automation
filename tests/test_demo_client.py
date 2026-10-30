@@ -1,6 +1,7 @@
 import io
 import json
 import unittest
+from urllib.error import HTTPError, URLError
 
 from demo.dify_client import DifyClient, DifyError
 
@@ -55,6 +56,31 @@ class DifyClientTests(unittest.TestCase):
         client = DifyClient("private-key", opener=lambda request, timeout: io.BytesIO(b"not json"))
         with self.assertRaises(DifyError):
             client.upload_file(b"data", "sample.png", "demo-user")
+
+    def test_auth_error_never_exposes_key(self):
+        def opener(request, timeout):
+            raise HTTPError(request.full_url, 401, "unauthorized", None, None)
+
+        client = DifyClient("private-key", opener=opener)
+        with self.assertRaisesRegex(DifyError, "密钥无效") as raised:
+            client.run_workflow({}, "demo-user")
+        self.assertNotIn("private-key", str(raised.exception))
+
+    def test_upload_size_error_is_actionable(self):
+        def opener(request, timeout):
+            raise HTTPError(request.full_url, 413, "too large", None, None)
+
+        client = DifyClient("private-key", opener=opener)
+        with self.assertRaisesRegex(DifyError, "上传大小"):
+            client.upload_file(b"data", "sample.mp4", "demo-user")
+
+    def test_timeout_is_actionable(self):
+        def opener(request, timeout):
+            raise URLError("timed out")
+
+        client = DifyClient("private-key", opener=opener)
+        with self.assertRaisesRegex(DifyError, "无法连接本地 Dify"):
+            client.run_workflow({}, "demo-user")
 
 
 if __name__ == "__main__":

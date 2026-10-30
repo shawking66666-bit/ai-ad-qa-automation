@@ -8,6 +8,7 @@ from pathlib import Path
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.concurrency import run_in_threadpool
 
 from .dify_client import DifyClient, DifyError
 
@@ -90,13 +91,15 @@ def create_demo_app(client: DifyClient | None = None) -> FastAPI:
                 "script": script.strip() if asset_type == "script" else "",
             }
             if upload is not None and content is not None:
-                file_id = active_client.upload_file(content, upload.filename or "upload", DEMO_USER)
+                file_id = await run_in_threadpool(
+                    active_client.upload_file, content, upload.filename or "upload", DEMO_USER
+                )
                 inputs[asset_type] = {
                     "type": asset_type,
                     "transfer_method": "local_file",
                     "upload_file_id": file_id,
                 }
-            output = active_client.run_workflow(inputs, DEMO_USER)
+            output = await run_in_threadpool(active_client.run_workflow, inputs, DEMO_USER)
         except DifyError as exc:
             status = 503 if not os.getenv("DIFY_DEMO_API_KEY") and client is None else 502
             raise HTTPException(status_code=status, detail=str(exc)) from None
