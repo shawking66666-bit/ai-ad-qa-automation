@@ -71,4 +71,10 @@
 
 ## 2026-10-30 发布记录
 
-用户确认后，本地 Dify 候选应用 `37ae4283-1534-4d93-8239-ea570bdce614` 已发布更新。编排页显示“已发布 几秒前”和“操作成功”；分享页 `http://localhost:18080/workflow/sniN6K0mMRkTvNVL` 可加载，展示 video、image、script 输入。发布后的 WebApp 尚未单独重复运行视频；上述 7 条证据来自发布前的同一草稿测试。该 `localhost` 链接只对运行本地 Dify 的电脑有效。
+用户确认后，本地 Dify 候选应用 `37ae4283-1534-4d93-8239-ea570bdce614` 已发布更新。编排页显示“已发布 几秒前”和“操作成功”；分享页 `http://localhost:18080/workflow/sniN6K0mMRkTvNVL` 可加载，展示 video、image、script 输入。发布后的 WebApp 视频复测见下节。该 `localhost` 链接只对运行本地 Dify 的电脑有效。
+
+## 2026-10-30 已发布 WebApp 视频复测
+
+在已发布的分享页重新上传同一段 39.27 KB 合成 MP4，并填写相同业务背景。运行抵达统一报告 End：受控 Agent 完成 `analyze_frames`、`check_ad_script`、`extract_additional_frames`、`generate_optimization_plan` 四个动作，补帧使用 1 次，`stop_reason=completed`，状态中无错误。输出 7 条证据、人类可读 Markdown 报告与优化方案；报告顶部及各维度均显示“未评分”，最终业务状态为 `human_review_required`，符合未生成结构化分数时的人工复核规则。
+
+展示限制：Dify WebApp 在可读报告之后继续展示 `evaluation_result` 和 `technical_details` 的原始 JSON。它们是工作流 API 所需的结构化输出，不应把当前 WebApp 宣称为“纯可读报告界面”。如需给作品集访客提供干净的体验，后续应增加独立展示层或另做仅输出 Markdown 的展示版；当前发布版仍可用于本地演示。测试使用合成素材，未验证真实广告的质检准确性。
