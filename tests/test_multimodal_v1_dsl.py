@@ -76,6 +76,30 @@ class MultimodalV1DslTests(unittest.TestCase):
         self.assertEqual(len(cleanup), 1)
         self.assertEqual(cleanup[0]["method"], "delete")
 
+    def test_video_guard_reads_decision_text_when_provider_returns_schema_hint(self):
+        guard = next(node for node in self.node_data("code") if node["title"] == "校验决策与守卫")
+        namespace = {}
+        exec(guard["code"], namespace)
+        state = {"final_status": "running", "completed_actions": [], "current_step": 0,
+                 "retry_count": 0, "supplementary_rounds": 0, "needs_human_review": False, "errors": []}
+        result = namespace["main"](
+            state_json=json.dumps(state), decision={"type": "json_object"},
+            decision_text='<think>reasoning</think>{"action":"analyze_frames","arguments":{"timestamps":[0.0,3.0]},"should_stop":"false"}',
+        )
+        self.assertEqual(result["action"], "analyze_frames")
+        self.assertEqual(json.loads(result["timestamps_json"]), [0.0, 3.0])
+
+    def test_video_guard_safely_stops_on_unparseable_decision(self):
+        guard = next(node for node in self.node_data("code") if node["title"] == "校验决策与守卫")
+        namespace = {}
+        exec(guard["code"], namespace)
+        state = {"final_status": "running", "completed_actions": [], "current_step": 0,
+                 "retry_count": 0, "supplementary_rounds": 0, "needs_human_review": False, "errors": []}
+        result = namespace["main"](state_json=json.dumps(state), decision={"type": "json_object"},
+                                   decision_text="<think>reasoning</think>not valid json")
+        self.assertEqual(result["action"], "stop")
+        self.assertTrue(json.loads(result["state_json"])["needs_human_review"])
+
     def test_outputs_separate_report_and_technical_details(self):
         ends = [node for node in self.node_data("end") if node["title"] == "输出多模态报告"]
         self.assertEqual(len(ends), 1)

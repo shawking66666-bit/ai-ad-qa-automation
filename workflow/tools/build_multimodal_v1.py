@@ -152,12 +152,56 @@ def _converge_report_ends(nodes: list[dict], edges: list[dict]) -> None:
     edges.append(base.edge(unpack_id, report_end_ids[0], "code", "end"))
 
 
+def _repair_video_decision_guard(nodes: list[dict]) -> None:
+    """DeepSeek may return a schema hint instead of parsed structured output."""
+    guard = _by_id(nodes, "1900000000012")
+    guard_code = '''import json
+ALLOWED={"analyze_frames","extract_additional_frames","check_ad_script","generate_optimization_plan","stop"}
+def main(state_json, decision, decision_text):
+    state=json.loads(state_json)
+    parsed=decision if isinstance(decision,dict) and decision.get("action") else None
+    if parsed is None:
+        text=str(decision_text or "").split("</think>")[-1]
+        start=text.find("{")
+        if start>=0:
+            try:
+                candidate,_=json.JSONDecoder().raw_decode(text[start:])
+                if isinstance(candidate,dict): parsed=candidate
+            except (ValueError,TypeError): pass
+    action=str((parsed or {}).get("action","stop"))
+    completed=state.get("completed_actions",[])
+    invalid=(parsed is None or action not in ALLOWED or state.get("final_status")!="running" or
+             (action=="extract_additional_frames" and state.get("supplementary_rounds",0)>=1) or
+             (action=="analyze_frames" and completed.count("analyze_frames")>=2) or
+             (action=="check_ad_script" and "check_ad_script" in completed) or
+             (action=="generate_optimization_plan" and "generate_optimization_plan" in completed))
+    if invalid:
+        action="stop"
+        state["needs_human_review"]=True
+        state.setdefault("errors",[]).append("决策解析失败或被确定性守卫拒绝")
+    state["current_step"]=int(state.get("current_step",0))+1
+    arguments=(parsed or {}).get("arguments")
+    if not isinstance(arguments,dict): arguments={}
+    timestamps=arguments.get("timestamps",[])
+    if not isinstance(timestamps,list): timestamps=[]
+    return {"action":action,"state_json":json.dumps(state,ensure_ascii=False),"timestamps_json":json.dumps(timestamps,ensure_ascii=False)}
+'''
+    guard["data"].update(base.code_data(
+        guard_code,
+        [base.var([base.LOOP_ID, "state_json"], "state_json"),
+         base.var(["1900000000011", "structured_output"], "decision", "object"),
+         base.var(["1900000000011", "text"], "decision_text")],
+        {"action": "string", "state_json": "string", "timestamps_json": "string"},
+    ))
+
+
 def build_dsl() -> dict:
     dsl = _migrate_inherited_start_references(deepcopy(base.dsl))
     graph = dsl["workflow"]["graph"]
     nodes, edges = graph["nodes"], graph["edges"]
     start = _by_id(nodes, "1900000000001")
     start["data"]["variables"], start["height"] = _start_variables(), 420
+    _repair_video_decision_guard(nodes)
 
     routes = [
         base.node("2900000000001", "内容类型是视频？", "if-else", 330, 1080, base.if_data(["1900000000001", "asset_type"], "video")),
