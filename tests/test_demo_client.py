@@ -25,6 +25,7 @@ class DifyClientTests(unittest.TestCase):
 
     def test_run_workflow_extracts_only_report_and_status(self):
         def opener(request, timeout):
+            self.assertEqual(timeout, 300)
             payload = json.loads(request.data)
             self.assertEqual(payload["inputs"]["asset_type"], "script")
             self.assertEqual(payload["response_mode"], "blocking")

@@ -76,7 +76,7 @@ class DifyClient:
             {"inputs": inputs, "response_mode": "blocking", "user": user},
             ensure_ascii=False,
         ).encode("utf-8")
-        payload = self._request("/workflows/run", body, "application/json", 120)
+        payload = self._request("/workflows/run", body, "application/json", 300)
         data = payload.get("data")
         if not isinstance(data, dict) or data.get("status") != "succeeded":
             raise DifyError("Dify 工作流未成功完成，请在 Dify 日志中查看详情")
