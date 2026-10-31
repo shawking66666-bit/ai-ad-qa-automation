@@ -184,6 +184,7 @@ def main(state_json, decision, decision_text):
     if not isinstance(arguments,dict): arguments={}
     timestamps=arguments.get("timestamps",[])
     if not isinstance(timestamps,list): timestamps=[]
+    if action=="extract_additional_frames": timestamps=timestamps[:3]
     return {"action":action,"state_json":json.dumps(state,ensure_ascii=False),"timestamps_json":json.dumps(timestamps,ensure_ascii=False)}
 '''
     guard["data"].update(base.code_data(
